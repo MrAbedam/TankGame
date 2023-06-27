@@ -50,7 +50,7 @@ public class CheckPMDTest {
         System.err.println("$$$GRADER$$$ | { type:\"SCORE\" , amount:2 , reason:\"PMD.\" } | $$$GRADER$$$" );
     }
 
-    
+
     private static void listFiles(List<File> files, File folder, String extension) {
         if (folder.canRead()) {
             if (folder.isDirectory()) {

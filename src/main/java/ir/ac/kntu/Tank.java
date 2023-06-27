@@ -5,26 +5,33 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import static ir.ac.kntu.TankGame.allTanks;
+import static ir.ac.kntu.TankGame.gameState;
 
 public class Tank {
-    private static final int MAX_HEALTH = 3;
 
+    private long lastShotTime = 0;
     private ImageView tankImageView;
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private int health;
     private Direction direction;
     private ArrayList<Bullet> bullets;
 
-
-    public Tank() {
-        tankImageView = new ImageView(new Image("images/PlayerMoveDown.png"));
-        x = 0;
-        y = 0;
-        health = 3;
-        direction = Direction.DOWN;
-        bullets = new ArrayList<>();
+    public Tank(int x, int y, int health, Direction direction) {
+        this.x = x;
+        this.y = y;
+        this.health = health;
+        this.direction = direction;
+        this.bullets = new ArrayList<Bullet>();
+        setTankImageView(new ImageView(new Image("images/RegularEnemyTankUp.png")));
+        tankImageView.setLayoutY(y);
+        tankImageView.setLayoutY(y);
+        allTanks.add(this);
     }
+
 
     public ArrayList<Bullet> getBullets() {
         return bullets;
@@ -38,11 +45,11 @@ public class Tank {
         this.tankImageView = tankImageView;
     }
 
-    public void setX(int x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(int y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -62,11 +69,11 @@ public class Tank {
         return tankImageView;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -74,52 +81,94 @@ public class Tank {
         return health;
     }
 
-    public void moveLeft() {
-        if (x - 5 < 0)return;
-        x -= 5;
-        setDirection(Direction.LEFT);
-        tankImageView.setLayoutX(x);
-        tankImageView.setImage(new Image("images/PlayerMoveLeft.png"));
-    }
-
-    public void moveRight() {
-        if (x + 5 > 770)return;
-        setDirection(Direction.RIGHT);
-        x += 5;
-        tankImageView.setLayoutX(x);
-        tankImageView.setImage(new Image("images/PlayerMoveRight.png"));
-    }
-
-    public void moveUp() {
-        if (y - 5 < 0)return;
-        setDirection(Direction.UP);
-        y -= 5;
-        tankImageView.setLayoutY(y);
-        tankImageView.setImage(new Image("images/PlayerMoveUp.png"));
-    }
-
-    public void moveDown() {
-        if (y + 5 > 570 )return;
-        setDirection(Direction.DOWN);
-        y += 5;
-        tankImageView.setLayoutY(y);
-        tankImageView.setImage(new Image("images/PlayerMoveDown.png"));
-    }
-
-    public void shoot(Pane root) {
-        Bullet bullet = new Bullet((int) (x + tankImageView.getImage().getWidth() / 2), y, this.direction);
-        bullets.add(bullet);
-        root.getChildren().add(bullet.getBulletImageView());
+    public void removeBullet(Bullet bullet) {
+        this.getBullets().remove(bullet);
     }
 
     public void hit() {
-        health++;
-        if (health >= MAX_HEALTH) {
-            System.out.println("oo im dead");
+        setHealth(getHealth() - 1);
+        if (this.getHealth() == 0) {
+            this.die();
         }
     }
 
-    public void removeBullet(Bullet bullet){
-        bullets.remove(bullet);
+    public void die() {
+        double deathX = this.getX();
+        double deathY = this.getY();
+        allTanks.remove(this);
+        System.out.println("1 tank died !!");
     }
+
+
+    public void moveLeft() {
+        if (getX() - 0.5 < 0) return;
+        setX(getX() - 0.5);
+        setDirection(Direction.LEFT);
+        getTankImageView().setLayoutX(getX());
+        getTankImageView().setImage(new Image("images/RegularEnemyTankLeft.png"));
+    }
+
+    public void moveRight() {
+        if (getX() + 0.5 > 770) return;
+        setDirection(Direction.RIGHT);
+        setX(getX() + 0.5);
+        getTankImageView().setLayoutX(getX());
+        getTankImageView().setImage(new Image("images/RegularEnemyTankRight.png"));
+    }
+
+    public void moveUp() {
+        if (getY() - 0.5 < 0) return;
+        setDirection(Direction.UP);
+        setY(getY() - 0.5);
+        getTankImageView().setLayoutY(getY());
+        getTankImageView().setImage(new Image("images/RegularEnemyTankUp.png"));
+    }
+
+    public void moveDown() {
+        if (getY() + 0.5 > 570) return;
+        setDirection(Direction.DOWN);
+        setY(getY() + 0.5);
+        getTankImageView().setLayoutY(getY());
+        getTankImageView().setImage(new Image("images/RegularEnemyTankDown.png"));
+    }
+
+
+    public void move(Pane root, PlayerTank playerTank) {
+        double xDiff = Math.abs(playerTank.getX() - getX());
+        double yDiff = Math.abs(playerTank.getY() - getY());
+
+        if (xDiff > 100) {
+            if (playerTank.getX() < getX()) {
+                moveLeft();
+            } else {
+                moveRight();
+            }
+        }
+        else if (yDiff > 100) {
+            if (playerTank.getY() < getY()) {
+                moveUp();
+            } else {
+                moveDown();
+            }
+        }
+        else {
+            shoot(root);
+        }
+
+        tankImageView.setLayoutX(x);
+        tankImageView.setLayoutY(y);
+    }
+
+    public void shoot(Pane root) {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTime = currentTime - lastShotTime;
+        if (elapsedTime >= 1000) {
+            Bullet bullet = new Bullet((int) (getX() + getTankImageView().getImage().getWidth() / 2), getY(), getDirection());
+            getBullets().add(bullet);
+            root.getChildren().add(bullet.getBulletImageView());
+            lastShotTime = currentTime;
+        }
+    }
+
+
 }

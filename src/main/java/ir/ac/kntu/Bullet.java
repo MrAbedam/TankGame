@@ -11,11 +11,11 @@ public class Bullet {
     private static final int BULLET_HEIGHT = 10;
 
     private ImageView bulletImageView;
-    private int x;
-    private int y;
+    private double x;
+    private double y;
     private Direction direction;
 
-    public Bullet(int startX, int startY, Direction direction) {
+    public Bullet(double startX, double startY, Direction direction) {
 
         x = startX - (BULLET_WIDTH / 2);
         y = startY - BULLET_HEIGHT;
