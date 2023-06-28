@@ -25,11 +25,11 @@ public class Tank {
     private Direction direction;
     private ArrayList<Bullet> bullets;
 
-    public Tank(int x, int y, int health, Direction direction) {
+    public Tank(int x, int y) {
         this.x = x;
         this.y = y;
-        this.health = health;
-        this.direction = direction;
+        this.health = 1;
+        this.direction = Direction.UP;
         this.bullets = new ArrayList<Bullet>();
         setTankImageView(new ImageView(new Image("images/RegularEnemyTankUp.png")));
         tankImageView.setLayoutY(y);

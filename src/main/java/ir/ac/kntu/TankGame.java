@@ -27,14 +27,13 @@ public class TankGame extends Application {
     public void start(Stage primaryStage) {
         root = new Pane();
 
-        p1 = new PlayerTank(100, 200, 3, Direction.UP);
-        Tank t1 = new Tank(10, 10, 1, Direction.RIGHT);
-        Tank t2 = new Tank(100, 300, 1 ,Direction.RIGHT);
-        Tank t3 = new Tank(150, 400, 1 ,Direction.RIGHT);
+        p1 = new PlayerTank(100, 200);
+        Tank t1 = new Tank(10, 10);
+        ArmoredTank t3 = new ArmoredTank(400, 400);
         root.getChildren().add(t1.getTankImageView());
         root.getChildren().add(p1.getTankImageView());
         root.getChildren().add(t3.getTankImageView());
-        root.getChildren().add(t2.getTankImageView());
+
 
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
 

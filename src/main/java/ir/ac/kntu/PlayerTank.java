@@ -12,13 +12,13 @@ public class PlayerTank extends Tank {
 
     private static final int MAX_HEALTH = 3;
 
-    public PlayerTank(int x, int y, int health, Direction direction) {
-        super(x,y,health,direction);
+    public PlayerTank(int x, int y) {
+        super(x,y);
         setTankImageView(new ImageView(new Image("images/PlayerMoveDown.png")));
         getTankImageView().setLayoutX(x);
         getTankImageView().setLayoutY(y);
-        health = MAX_HEALTH;
-        direction = Direction.UP;
+        setHealth(MAX_HEALTH);
+        setDirection(Direction.DOWN);
 
     }
 
