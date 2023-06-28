@@ -57,18 +57,23 @@ public class PlayerTank extends Tank {
     }
 
     public void shoot(Pane root) {
-        Bullet bullet = new Bullet((int) (getX() + getTankImageView().getImage().getWidth() / 2), getY(), getDirection());
+        Bullet bullet = new Bullet(this,(int) (getX() + getTankImageView().getImage().getWidth() / 2), getY(), getDirection());
         getBullets().add(bullet);
         root.getChildren().add(bullet.getBulletImageView());
     }
 
     @Override
-    public void hit() {
+    public void hit(Pane root) {
         setHealth(getHealth()-1);
-        if (getHealth() >= MAX_HEALTH) {
+        if (getHealth() <= 0) {
+            for (Bullet bullet : this.getBullets()){
+                root.getChildren().remove(bullet.getBulletImageView());
+            }
             System.out.println("oo im dead");
+            root.getChildren().remove(this.getTankImageView());
             gameState = GameState.ENDED;
         }
+
     }
 
 
