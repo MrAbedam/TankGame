@@ -13,9 +13,54 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static ir.ac.kntu.TankGame.*;
+import static ir.ac.kntu.Wall.*;
 
 public class Tank {
 
+
+    public boolean cantMoveTo(double x, double y, Direction direction) {
+        double leftBoundary = x;
+        double rightBoundary = x + tankWidth;
+        double topBoundary = y;
+        double bottomBoundary = y + tankHeight;
+        for (Wall wall : allWalls) {
+            double wallX = wall.getX();
+            double wallY = wall.getY();
+            double tankLayoutX = getTankImageView().getLayoutX();
+            double tankLayoutY = getTankImageView().getLayoutY();
+            switch (direction) {
+                case LEFT:
+                    if (rightBoundary > wallX && leftBoundary < wallX + wallWidth && bottomBoundary > wallY
+                            && topBoundary < wallY + wallHeight) {
+                        return true;
+                    }
+                    break;
+                case RIGHT:
+                    if (leftBoundary < wallX + wallWidth && rightBoundary > wallX && bottomBoundary > wallY
+                            && topBoundary < wallY + wallHeight) {
+                        return true;
+                    }
+                    break;
+                case UP:
+                    if (bottomBoundary > wallY && topBoundary  < wallY + wallHeight && rightBoundary > wallX
+                            && leftBoundary < wallX + wallWidth) {
+                        return true;
+                    }
+                    break;
+                case DOWN:
+                    if (topBoundary < wallY + wallHeight && bottomBoundary > wallY && rightBoundary > wallX
+                            && leftBoundary < wallX + wallWidth) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
+
+    public static double tankHeight = 40;
+    public static double tankWidth = 40;
 
     private long lastShotTime = 0;
     private ImageView tankImageView;
@@ -102,7 +147,7 @@ public class Tank {
         }
     }
 
-    public void showExplosion(String imageName, double time, double deathX, double deathY, Pane root) {
+    public static void showExplosion(String imageName, double time, double deathX, double deathY, Pane root) {
         ImageView explosionImageView = new ImageView(new Image("images/" + imageName + ".png"));
         explosionImageView.setLayoutX(deathX);
         explosionImageView.setLayoutY(deathY);
@@ -119,13 +164,7 @@ public class Tank {
         timeline.play();
     }
 
-    public void die(Pane root) {
-        double deathX = this.getX();
-        double deathY = this.getY();
-        allTanks.remove(this);
-        System.out.println("1 tank died !!");
-        root.getChildren().remove(this.getTankImageView());
-
+    public static void gradualExplosion(double deathX, double deathY, Pane root){
         showExplosion("SmallExplosion", 0.2, deathX, deathY, root);
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(0.2), event -> {
@@ -138,14 +177,17 @@ public class Tank {
         timeline.play();
     }
 
-
-
-
-
-
-
+    public void die(Pane root) {
+        double deathX = this.getX();
+        double deathY = this.getY();
+        allTanks.remove(this);
+        System.out.println("1 tank died !!");
+        root.getChildren().remove(this.getTankImageView());
+        gradualExplosion(deathX,deathY,root);
+    }
 
     public void moveLeft() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) return;
         if (getX() - 0.5 < 0 ) return;
         setX(getX() - 0.5);
         setDirection(Direction.LEFT);
@@ -154,6 +196,7 @@ public class Tank {
     }
 
     public void moveRight() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
         if (getX() + 0.5 > 770 ) return;
         setDirection(Direction.RIGHT);
         setX(getX() + 0.5);
@@ -162,6 +205,7 @@ public class Tank {
     }
 
     public void moveUp() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) return;
         if (getY() - 0.5 < 0 ) return;
         setDirection(Direction.UP);
         setY(getY() - 0.5);
@@ -170,6 +214,7 @@ public class Tank {
     }
 
     public void moveDown() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
         if (getY() + 0.5 > 570 ) return;
         setDirection(Direction.DOWN);
         setY(getY() + 0.5);

@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static ir.ac.kntu.Wall.allWalls;
+
 public class TankGame extends Application {
 
     public static ArrayList<Bullet> freeBullets = new ArrayList<>();
@@ -23,19 +25,41 @@ public class TankGame extends Application {
         return gameState;
     }
 
+    public void addMetalWall(double x, double y, Pane root){
+        MetalWall metalWall = new MetalWall(x, y);
+        metalWall.addToPane(root);
+    }
+
+    public void addSimpleWall(int x, int y, Pane root){
+        SimpleWall simpleWall = new SimpleWall(x, y);
+        simpleWall.addToPane(root);
+    }
+
+    public void addArmoredTank(int x, int y, Pane root){
+        ArmoredTank t1 = new ArmoredTank(x, y);
+        root.getChildren().add(t1.getTankImageView());
+    }
+
+    public void addRegularTank(int x, int y, Pane root){
+        Tank t1 = new Tank(x, y);
+        root.getChildren().add(t1.getTankImageView());
+    }
+
     @Override
     public void start(Stage primaryStage) {
         root = new Pane();
 
-        p1 = new PlayerTank(100, 200);
-        Tank t1 = new Tank(10, 10);
-        ArmoredTank t3 = new ArmoredTank(400, 400);
-        root.getChildren().add(t1.getTankImageView());
+        p1 = new PlayerTank(100, 400);
         root.getChildren().add(p1.getTankImageView());
-        root.getChildren().add(t3.getTankImageView());
-
-
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
+        addRegularTank(0,0,root);
+        addArmoredTank(0,500,root);
+        addSimpleWall(100,100,root);
+        addSimpleWall(100,150,root);
+        addMetalWall(100,200,root);
+        addMetalWall(100,250,root);
+        addMetalWall(100,300,root);
+        addMetalWall(100,350,root);
 
         scene.setOnKeyPressed(event -> {
             KeyCode keyCode = event.getCode();
@@ -138,15 +162,32 @@ public class TankGame extends Application {
             bullet.removeBulletFromTank(root, bullet);
         }
     }
+
     private void updateBullets() {
         for (Tank testTank : allTanks) {
-            Iterator<Bullet> iterator = testTank.getBullets().iterator();
-            while (iterator.hasNext()) {
-                Bullet bullet = iterator.next();
+            Iterator<Bullet> bulletIterator = testTank.getBullets().iterator();
+            while (bulletIterator.hasNext()) {
+                Bullet bullet = bulletIterator.next();
                 bullet.move();
                 if (bullet.isOffScreen(root)) {
-                    iterator.remove();
+                    bulletIterator.remove();
                     root.getChildren().remove(bullet.getBulletImageView());
+                }
+                handleWallCollision(bullet,bulletIterator,root);
+            }
+        }
+    }
+
+    public static void handleWallCollision(Bullet bullet, Iterator<Bullet> bulletIterator, Pane root){
+        Iterator<Wall> wallIterator = allWalls.iterator();
+        while (wallIterator.hasNext()) {
+            Wall testWall = wallIterator.next();
+            if (bullet.collidesWith(testWall)) {
+                if (testWall instanceof SimpleWall) {
+                    testWall.handleBulletCollision(bullet,testWall,bulletIterator,wallIterator,root);
+                }
+                if (testWall instanceof MetalWall) {
+                    testWall.handleBulletCollision(bullet,testWall,bulletIterator,wallIterator,root);
                 }
             }
         }

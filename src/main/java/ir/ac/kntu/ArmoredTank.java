@@ -20,6 +20,7 @@ public class ArmoredTank extends Tank {
 
     @Override
     public void moveLeft() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) return;
         if (getX() - 0.75 < 0)return;
         setX(getX()-0.75);
         setDirection(Direction.LEFT);
@@ -28,6 +29,7 @@ public class ArmoredTank extends Tank {
     }
     @Override
     public void moveRight() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
         if (getX() + 0.75 > WIDTH -30)return;
         setDirection(Direction.RIGHT);
         setX(getX()+0.75);
@@ -37,6 +39,7 @@ public class ArmoredTank extends Tank {
 
     @Override
     public void moveUp() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) return;
         if (getY() - 0.75 < 0)return;
         setDirection(Direction.UP);
         setY(getY()-0.75);
@@ -45,6 +48,7 @@ public class ArmoredTank extends Tank {
     }
     @Override
     public void moveDown() {
+        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
         if (getY() + 0.75 > HEIGHT - 30 )return;
         setDirection(Direction.DOWN);
         setY(getY()+0.75);

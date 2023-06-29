@@ -1,10 +1,12 @@
 package ir.ac.kntu;
 
 import ir.ac.kntu.Tank;
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import static ir.ac.kntu.TankGame.allTanks;
@@ -22,6 +24,7 @@ public class Bullet {
     private double x;
     private double y;
     private Direction direction;
+    private boolean destroyed;
 
     public Bullet(Tank tank,double startX, double startY, Direction direction) {
 
@@ -109,6 +112,26 @@ public class Bullet {
         }
     }
 
+    public boolean collidesWith(Wall wall) {
+        Bounds bulletBounds = bulletImageView.getBoundsInParent();
+        Bounds wallBounds = wall.getWallImageView().getBoundsInParent();
+        return bulletBounds.intersects(wallBounds);
+    }
+
+    public void setDestroyed(boolean destroyed, Pane root) {
+        this.destroyed = destroyed;
+        if (destroyed) {
+            root.getChildren().remove(bulletImageView);
+        }
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+    }
 
 
 }
