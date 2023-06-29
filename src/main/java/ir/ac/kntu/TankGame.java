@@ -45,6 +45,11 @@ public class TankGame extends Application {
         root.getChildren().add(t1.getTankImageView());
     }
 
+    public void addLuckyTank(int x, int y, Pane root){
+        LuckyTank t1 = new LuckyTank(x, y);
+        root.getChildren().add(t1.getTankImageView());
+    }
+
     @Override
     public void start(Stage primaryStage) {
         root = new Pane();
@@ -52,8 +57,8 @@ public class TankGame extends Application {
         p1 = new PlayerTank(100, 400);
         root.getChildren().add(p1.getTankImageView());
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        addRegularTank(0,0,root);
-        addArmoredTank(0,500,root);
+        addLuckyTank(0,0,root);
+
         addSimpleWall(100,100,root);
         addSimpleWall(100,150,root);
         addMetalWall(100,200,root);

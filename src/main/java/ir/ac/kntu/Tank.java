@@ -18,45 +18,6 @@ import static ir.ac.kntu.Wall.*;
 public class Tank {
 
 
-    public boolean cantMoveTo(double x, double y, Direction direction) {
-        double leftBoundary = x;
-        double rightBoundary = x + tankWidth;
-        double topBoundary = y;
-        double bottomBoundary = y + tankHeight;
-        for (Wall wall : allWalls) {
-            double wallX = wall.getX();
-            double wallY = wall.getY();
-            double tankLayoutX = getTankImageView().getLayoutX();
-            double tankLayoutY = getTankImageView().getLayoutY();
-            switch (direction) {
-                case LEFT:
-                    if (rightBoundary > wallX && leftBoundary < wallX + wallWidth && bottomBoundary > wallY
-                            && topBoundary < wallY + wallHeight) {
-                        return true;
-                    }
-                    break;
-                case RIGHT:
-                    if (leftBoundary < wallX + wallWidth && rightBoundary > wallX && bottomBoundary > wallY
-                            && topBoundary < wallY + wallHeight) {
-                        return true;
-                    }
-                    break;
-                case UP:
-                    if (bottomBoundary > wallY && topBoundary  < wallY + wallHeight && rightBoundary > wallX
-                            && leftBoundary < wallX + wallWidth) {
-                        return true;
-                    }
-                    break;
-                case DOWN:
-                    if (topBoundary < wallY + wallHeight && bottomBoundary > wallY && rightBoundary > wallX
-                            && leftBoundary < wallX + wallWidth) {
-                        return true;
-                    }
-                    break;
-            }
-        }
-        return false;
-    }
 
 
     public static double tankHeight = 40;
@@ -259,6 +220,47 @@ public class Tank {
             root.getChildren().add(bullet.getBulletImageView());
             lastShotTime = currentTime;
         }
+    }
+
+
+    public boolean cantMoveTo(double x, double y, Direction direction) {
+        double leftBoundary = x;
+        double rightBoundary = x + tankWidth;
+        double topBoundary = y;
+        double bottomBoundary = y + tankHeight;
+        for (Wall wall : allWalls) {
+            double wallX = wall.getX();
+            double wallY = wall.getY();
+            double tankLayoutX = getTankImageView().getLayoutX();
+            double tankLayoutY = getTankImageView().getLayoutY();
+            switch (direction) {
+                case LEFT:
+                    if (rightBoundary > wallX && leftBoundary < wallX + wallWidth && bottomBoundary > wallY
+                            && topBoundary < wallY + wallHeight) {
+                        return true;
+                    }
+                    break;
+                case RIGHT:
+                    if (leftBoundary < wallX + wallWidth && rightBoundary > wallX && bottomBoundary > wallY
+                            && topBoundary < wallY + wallHeight) {
+                        return true;
+                    }
+                    break;
+                case UP:
+                    if (bottomBoundary > wallY && topBoundary  < wallY + wallHeight && rightBoundary > wallX
+                            && leftBoundary < wallX + wallWidth) {
+                        return true;
+                    }
+                    break;
+                case DOWN:
+                    if (topBoundary < wallY + wallHeight && bottomBoundary > wallY && rightBoundary > wallX
+                            && leftBoundary < wallX + wallWidth) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
     }
 
 }
