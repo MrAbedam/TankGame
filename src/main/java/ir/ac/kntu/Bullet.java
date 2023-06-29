@@ -18,8 +18,6 @@ public class Bullet {
 
     private Tank owner;
 
-
-
     private ImageView bulletImageView;
     private double x;
     private double y;
@@ -84,7 +82,6 @@ public class Bullet {
                 bulletY + bulletHeight > tankY) {
             return true; // Collision occurred
         }
-
         return false; // No collision
     }
 

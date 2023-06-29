@@ -15,7 +15,7 @@ import static ir.ac.kntu.Wall.allWalls;
 
 public class TankGame extends Application {
 
-    public static ArrayList<Bullet> freeBullets = new ArrayList<>();
+    public static ArrayList<Superpower> superPowers = new ArrayList<>();
     public static ArrayList<Tank> allTanks = new ArrayList<>();
     public static GameState gameState = GameState.RUNNING;
     private PlayerTank p1;
@@ -25,29 +25,35 @@ public class TankGame extends Application {
         return gameState;
     }
 
-    public void addMetalWall(double x, double y, Pane root){
+    public void addMetalWall(double x, double y, Pane root) {
         MetalWall metalWall = new MetalWall(x, y);
         metalWall.addToPane(root);
     }
 
-    public void addSimpleWall(int x, int y, Pane root){
+    public void addSimpleWall(int x, int y, Pane root) {
         SimpleWall simpleWall = new SimpleWall(x, y);
         simpleWall.addToPane(root);
     }
 
-    public void addArmoredTank(int x, int y, Pane root){
+    public void addArmoredTank(int x, int y, Pane root) {
         ArmoredTank t1 = new ArmoredTank(x, y);
         root.getChildren().add(t1.getTankImageView());
     }
 
-    public void addRegularTank(int x, int y, Pane root){
+    public void addRegularTank(int x, int y, Pane root) {
         Tank t1 = new Tank(x, y);
         root.getChildren().add(t1.getTankImageView());
     }
 
-    public void addLuckyTank(int x, int y, Pane root){
+    public void addLuckyTank(int x, int y, Pane root) {
         LuckyTank t1 = new LuckyTank(x, y);
         root.getChildren().add(t1.getTankImageView());
+    }
+
+    public void splitWall() {
+        for (int i = 0; i < 600; i = i + 50) {
+            addMetalWall(600, i, root);
+        }
     }
 
     @Override
@@ -57,14 +63,16 @@ public class TankGame extends Application {
         p1 = new PlayerTank(100, 400);
         root.getChildren().add(p1.getTankImageView());
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        addLuckyTank(0,0,root);
+        addLuckyTank(0, 0, root);
+        splitWall();
 
-        addSimpleWall(100,100,root);
-        addSimpleWall(100,150,root);
-        addMetalWall(100,200,root);
-        addMetalWall(100,250,root);
-        addMetalWall(100,300,root);
-        addMetalWall(100,350,root);
+        addSimpleWall(100, 100, root);
+        addSimpleWall(100, 150, root);
+        addMetalWall(100, 200, root);
+        addMetalWall(100, 250, root);
+        addMetalWall(100, 300, root);
+        addMetalWall(100, 350, root);
+
 
         scene.setOnKeyPressed(event -> {
             KeyCode keyCode = event.getCode();
@@ -93,6 +101,7 @@ public class TankGame extends Application {
                     updateTanks();
                     updateHitsFromPlayer(p1);
                     updateHitsFromEnemies(p1);
+                    updateSuperPower();
                 } else {
                     System.out.println("You died");
                 }
@@ -108,7 +117,7 @@ public class TankGame extends Application {
             Tank tank = iterator.next();
             if (tank.getClass() != PlayerTank.class) {
                 tank.move(root, p1);
-                if (!(tank.getHealth()>=1)) {
+                if (!(tank.getHealth() >= 1)) {
                     root.getChildren().remove(tank.getTankImageView());
                     iterator.remove();
                 }
@@ -178,27 +187,39 @@ public class TankGame extends Application {
                     bulletIterator.remove();
                     root.getChildren().remove(bullet.getBulletImageView());
                 }
-                handleWallCollision(bullet,bulletIterator,root);
+                handleWallCollision(bullet, bulletIterator, root);
             }
         }
     }
 
-    public static void handleWallCollision(Bullet bullet, Iterator<Bullet> bulletIterator, Pane root){
+    private void updateSuperPower() {
+        if (superPowers.isEmpty()) return;
+        Iterator<Superpower> superpowerIterator = superPowers.iterator();
+        while (superpowerIterator.hasNext()) {
+            Superpower testSuper = superpowerIterator.next();
+            if (testSuper.collidesWith(p1)) {
+                testSuper.collectSuperPower();
+                superpowerIterator.remove(); // Safely remove the current element
+            }
+        }
+    }
+
+
+    public static void handleWallCollision(Bullet bullet, Iterator<Bullet> bulletIterator, Pane root) {
         Iterator<Wall> wallIterator = allWalls.iterator();
         while (wallIterator.hasNext()) {
             Wall testWall = wallIterator.next();
             if (bullet.collidesWith(testWall)) {
-                if (bulletIterator == null)continue;
+                if (bulletIterator == null) continue;
                 if (testWall instanceof SimpleWall) {
-                    testWall.handleBulletCollision(bullet,testWall,bulletIterator,wallIterator,root);
+                    testWall.handleBulletCollision(bullet, testWall, bulletIterator, wallIterator, root);
                 }
                 if (testWall instanceof MetalWall) {
-                    testWall.handleBulletCollision(bullet,testWall,bulletIterator,wallIterator,root);
+                    testWall.handleBulletCollision(bullet, testWall, bulletIterator, wallIterator, root);
                 }
             }
         }
     }
-
 
 
     public static void setGameState(GameState gameState) {

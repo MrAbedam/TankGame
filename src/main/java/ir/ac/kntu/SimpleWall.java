@@ -13,12 +13,16 @@ public class SimpleWall extends Wall {
 
     @Override
     public void handleBulletCollision(Bullet bullet, Wall testWall, Iterator<Bullet> bulletIterator, Iterator<Wall> wallIterator, Pane root) {
-        setDestroyed(true);  // Destroy the wall when hit by a bullet
-        bullet.setDestroyed(true);
-        bulletIterator.remove();
-        root.getChildren().remove(bullet.getBulletImageView());
-        wallIterator.remove();
-        testWall.removeFromPane(root);
-        gradualExplosion(testWall.getX(),testWall.getY(),root);
+        try{
+            setDestroyed(true);  // Destroy the wall when hit by a bullet
+            bullet.setDestroyed(true);
+            bulletIterator.remove();
+            root.getChildren().remove(bullet.getBulletImageView());
+            wallIterator.remove();
+            testWall.removeFromPane(root);
+            gradualExplosion(testWall.getX(),testWall.getY(),root);
+        }catch (IllegalStateException e){
+
+        }
     }
 }
