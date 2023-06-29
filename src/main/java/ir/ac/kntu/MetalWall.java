@@ -13,7 +13,7 @@ public class MetalWall extends Wall {
     @Override
     public void handleBulletCollision(Bullet bullet, Wall testWall, Iterator<Bullet> bulletIterator, Iterator<Wall> wallIterator, Pane root) {
         bullet.setDestroyed(true);
-        if (bulletIterator!= null){
+        if (bulletIterator.hasNext()){
             bulletIterator.remove();
         }
         root.getChildren().remove(bullet.getBulletImageView());

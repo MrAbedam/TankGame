@@ -183,6 +183,7 @@ public class TankGame extends Application {
         while (wallIterator.hasNext()) {
             Wall testWall = wallIterator.next();
             if (bullet.collidesWith(testWall)) {
+                if (bulletIterator == null)continue;
                 if (testWall instanceof SimpleWall) {
                     testWall.handleBulletCollision(bullet,testWall,bulletIterator,wallIterator,root);
                 }
