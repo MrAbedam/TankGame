@@ -28,6 +28,7 @@ public class TankGame extends Application {
     public static Eagle eagle;
     private Pane root;
 
+    public static int storedHealth = 3;
     public static int mapSize = 500;
     public static int remainingTanks = 4;
     public static int currentLevel = 1;  // Start with level 1
@@ -131,6 +132,7 @@ public class TankGame extends Application {
 
     public void gameSetup(){
         p1 = new PlayerTank(mapSize/2 - 100, mapSize -40);
+        p1.setHealth(storedHealth);
         eagle = new Eagle((mapSize/2), mapSize-50);
         addMetalWall(mapSize/2+50,mapSize-50,root);
         addMetalWall(mapSize/2-50,mapSize-50,root);
@@ -332,7 +334,6 @@ public class TankGame extends Application {
 
    private void startLevel(int level) {
         // Start a new level with the specified level number
-
         currentLevel = level;
         remainingTanks = 10 + (level - 1) * 4;
         allTanks.clear();
@@ -351,8 +352,18 @@ public class TankGame extends Application {
         double fontSize = 20;
         winText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().add(winText);
-        System.out.println(playerScore);
-
+        storedHealth = p1.getHealth();
+        // Go to the next level or end the game
+        if (currentLevel < 10) {
+            startLevel(currentLevel + 1);  // Go to the next level
+        } else {
+           Text endGameText = new Text("You have completed this game, WELL PLAYED.");
+            winText.setLayoutX(mapSize / 2);
+            winText.setLayoutY(mapSize / 2);
+            winText.setFill(Color.WHITE);
+            winText.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+            root.getChildren().add(winText);
+        }
     }
 
     private void showGameOverPage() {
