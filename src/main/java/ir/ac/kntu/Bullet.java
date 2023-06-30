@@ -115,6 +115,12 @@ public class Bullet {
         return bulletBounds.intersects(wallBounds);
     }
 
+    public boolean collidesWith(Eagle eagle) {
+        Bounds bulletBounds = bulletImageView.getBoundsInParent();
+        Bounds eagleBounds = eagle.getImgView().getBoundsInParent();
+        return bulletBounds.intersects(eagleBounds);
+    }
+
     public void setDestroyed(boolean destroyed, Pane root) {
         this.destroyed = destroyed;
         if (destroyed) {

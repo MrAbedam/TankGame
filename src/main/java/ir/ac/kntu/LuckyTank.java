@@ -9,6 +9,7 @@ import java.util.Random;
 import static ir.ac.kntu.ArmoredTank.HEIGHT;
 import static ir.ac.kntu.ArmoredTank.WIDTH;
 import static ir.ac.kntu.TankGame.allTanks;
+import static ir.ac.kntu.TankGame.remainingTanks;
 
 public class LuckyTank extends Tank {
     public LuckyTank(int x, int y) {
@@ -22,6 +23,7 @@ public class LuckyTank extends Tank {
 
     @Override
     public void die(Pane root) {
+        remainingTanks--;
         double deathX = this.getX();
         double deathY = this.getY();
         allTanks.remove(this);

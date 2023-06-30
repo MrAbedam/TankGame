@@ -142,6 +142,7 @@ public class Tank {
     }
 
     public void die(Pane root) {
+        remainingTanks--;
         double deathX = this.getX();
         double deathY = this.getY();
         allTanks.remove(this);
@@ -161,7 +162,7 @@ public class Tank {
 
     public void moveRight() {
         if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 0.5 > 770) return;
+        if (getX() + 0.5 > mapSize-30) return;
         setDirection(Direction.RIGHT);
         setX(getX() + 0.5);
         getTankImageView().setLayoutX(getX());
@@ -179,7 +180,7 @@ public class Tank {
 
     public void moveDown() {
         if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
-        if (getY() + 0.5 > 570) return;
+        if (getY() + 0.5 > mapSize-30) return;
         setDirection(Direction.DOWN);
         setY(getY() + 0.5);
         getTankImageView().setLayoutY(getY());

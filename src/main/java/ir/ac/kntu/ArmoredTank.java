@@ -3,10 +3,12 @@ package ir.ac.kntu;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import static ir.ac.kntu.TankGame.mapSize;
+
 public class ArmoredTank extends Tank {
 
-    static final double WIDTH = 800;
-    static final double HEIGHT = 600;
+    static final double WIDTH = mapSize;
+    static final double HEIGHT = mapSize;
 
 
     public ArmoredTank(int x, int y) {

@@ -6,8 +6,7 @@ import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
-import static ir.ac.kntu.TankGame.gameState;
-import static ir.ac.kntu.TankGame.p1;
+import static ir.ac.kntu.TankGame.*;
 import static ir.ac.kntu.Wall.*;
 
 public class PlayerTank extends Tank {
@@ -40,7 +39,7 @@ public class PlayerTank extends Tank {
     @Override
     public void moveRight() {
         if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 5 > 770) return;
+        if (getX() + 5 > mapSize-30) return;
         setDirection(Direction.RIGHT);
         setX(getX() + 5);
         getTankImageView().setLayoutX(getX());
@@ -60,7 +59,7 @@ public class PlayerTank extends Tank {
     @Override
     public void moveDown() {
         if (cantMoveTo(getX(), getY() + 5, Direction.DOWN)) return;
-        if (getY() + 5 > 570) return;
+        if (getY() + 5 > mapSize-30) return;
         setDirection(Direction.DOWN);
         setY(getY() + 5);
         getTankImageView().setLayoutY(getY());
