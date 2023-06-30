@@ -18,7 +18,7 @@ public class TankGame extends Application {
     public static ArrayList<Superpower> superPowers = new ArrayList<>();
     public static ArrayList<Tank> allTanks = new ArrayList<>();
     public static GameState gameState = GameState.RUNNING;
-    private PlayerTank p1;
+    public static PlayerTank p1;
     private Pane root;
 
     public GameState getGameState() {
@@ -63,9 +63,15 @@ public class TankGame extends Application {
         p1 = new PlayerTank(100, 400);
         root.getChildren().add(p1.getTankImageView());
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        addLuckyTank(0, 0, root);
+        addLuckyTank(0, 50, root);
+        addArmoredTank(400,0,root);
+        addLuckyTank(300,150,root);
+        addLuckyTank(500,100,root);
+        addLuckyTank(600,200,root);
         splitWall();
 
+
+        addSimpleWall(0, 0, root);
         addSimpleWall(100, 100, root);
         addSimpleWall(100, 150, root);
         addMetalWall(100, 200, root);

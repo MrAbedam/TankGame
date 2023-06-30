@@ -1,16 +1,13 @@
 package ir.ac.kntu;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import static ir.ac.kntu.TankGame.*;
 import static ir.ac.kntu.Wall.*;
@@ -18,8 +15,7 @@ import static ir.ac.kntu.Wall.*;
 public class Tank {
 
 
-
-
+    public static boolean isFreezeActive = false;
     public static double tankHeight = 40;
     public static double tankWidth = 40;
 
@@ -43,6 +39,13 @@ public class Tank {
         allTanks.add(this);
     }
 
+    public static boolean isIsFreezeActive() {
+        return isFreezeActive;
+    }
+
+    public static void setIsFreezeActive(boolean isFreezeActive) {
+        Tank.isFreezeActive = isFreezeActive;
+    }
 
     public ArrayList<Bullet> getBullets() {
         return bullets;
@@ -97,8 +100,8 @@ public class Tank {
     }
 
     public void hit(Pane root) {
-        setHealth(getHealth() - 1);
-        if (this.getHealth() == 0) {
+        setHealth(getHealth() - p1.getBulletPower());
+        if (this.getHealth() <= 0) {
             this.die(root);
             if (!this.getBullets().isEmpty()) {
                 for (Bullet bullet : this.getBullets()) {
@@ -125,7 +128,7 @@ public class Tank {
         timeline.play();
     }
 
-    public static void gradualExplosion(double deathX, double deathY, Pane root){
+    public static void gradualExplosion(double deathX, double deathY, Pane root) {
         showExplosion("SmallExplosion", 0.2, deathX, deathY, root);
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(0.2), event -> {
@@ -144,12 +147,12 @@ public class Tank {
         allTanks.remove(this);
         System.out.println("1 tank died !!");
         root.getChildren().remove(this.getTankImageView());
-        gradualExplosion(deathX,deathY,root);
+        gradualExplosion(deathX, deathY, root);
     }
 
     public void moveLeft() {
         if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) return;
-        if (getX() - 0.5 < 0 ) return;
+        if (getX() - 0.5 < 0) return;
         setX(getX() - 0.5);
         setDirection(Direction.LEFT);
         getTankImageView().setLayoutX(getX());
@@ -158,7 +161,7 @@ public class Tank {
 
     public void moveRight() {
         if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 0.5 > 770 ) return;
+        if (getX() + 0.5 > 770) return;
         setDirection(Direction.RIGHT);
         setX(getX() + 0.5);
         getTankImageView().setLayoutX(getX());
@@ -167,7 +170,7 @@ public class Tank {
 
     public void moveUp() {
         if (cantMoveTo(getX() + 5, getY(), Direction.UP)) return;
-        if (getY() - 0.5 < 0 ) return;
+        if (getY() - 0.5 < 0) return;
         setDirection(Direction.UP);
         setY(getY() - 0.5);
         getTankImageView().setLayoutY(getY());
@@ -176,7 +179,7 @@ public class Tank {
 
     public void moveDown() {
         if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
-        if (getY() + 0.5 > 570 ) return;
+        if (getY() + 0.5 > 570) return;
         setDirection(Direction.DOWN);
         setY(getY() + 0.5);
         getTankImageView().setLayoutY(getY());
@@ -185,6 +188,9 @@ public class Tank {
 
 
     public void move(Pane root, PlayerTank playerTank) {
+        if (isIsFreezeActive()) {
+            return;
+        }
         double xDiff = Math.abs(playerTank.getX() - getX());
         double yDiff = Math.abs(playerTank.getY() - getY());
 
@@ -194,15 +200,13 @@ public class Tank {
             } else {
                 moveRight();
             }
-        }
-        else if (yDiff > 100) {
+        } else if (yDiff > 100) {
             if (playerTank.getY() < getY()) {
                 moveUp();
             } else {
                 moveDown();
             }
-        }
-        else {
+        } else {
             shoot(root);
         }
 
@@ -247,7 +251,7 @@ public class Tank {
                     }
                     break;
                 case UP:
-                    if (bottomBoundary > wallY && topBoundary  < wallY + wallHeight && rightBoundary > wallX
+                    if (bottomBoundary > wallY && topBoundary < wallY + wallHeight && rightBoundary > wallX
                             && leftBoundary < wallX + wallWidth) {
                         return true;
                     }
@@ -261,6 +265,10 @@ public class Tank {
             }
         }
         return false;
+    }
+
+    public void setFrozenImageView(Tank tank) {
+        tank.setTankImageView(new ImageView(new Image("images/FrozenEnemy.png")));
     }
 
 }

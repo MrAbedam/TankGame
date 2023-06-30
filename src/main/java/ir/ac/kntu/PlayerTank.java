@@ -7,14 +7,18 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 
 import static ir.ac.kntu.TankGame.gameState;
+import static ir.ac.kntu.TankGame.p1;
 import static ir.ac.kntu.Wall.*;
 
 public class PlayerTank extends Tank {
 
     private static final int MAX_HEALTH = 3;
 
+    private int bulletPower;
+
     public PlayerTank(int x, int y) {
         super(x, y);
+        this.bulletPower = 1;
         setTankImageView(new ImageView(new Image("images/PlayerMoveDown.png")));
         getTankImageView().setLayoutX(x);
         getTankImageView().setLayoutY(y);
@@ -69,8 +73,17 @@ public class PlayerTank extends Tank {
         root.getChildren().add(bullet.getBulletImageView());
     }
 
+    public int getBulletPower() {
+        return bulletPower;
+    }
+
+    public void setBulletPower(int bulletPower) {
+        this.bulletPower = bulletPower;
+    }
+
     @Override
     public void hit(Pane root) {
+        setBulletPower(1);
         setHealth(getHealth() - 1);
         if (getHealth() <= 0) {
             for (Bullet bullet : this.getBullets()) {
@@ -79,6 +92,7 @@ public class PlayerTank extends Tank {
             System.out.println("oo im dead");
             root.getChildren().remove(this.getTankImageView());
             gameState = GameState.ENDED;
+            gradualExplosion(p1.getX(),p1.getY(),root);
         }
 
     }

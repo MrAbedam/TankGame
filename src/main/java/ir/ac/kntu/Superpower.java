@@ -10,6 +10,7 @@ import javafx.util.Duration;
 
 import java.util.Random;
 
+import static ir.ac.kntu.TankGame.p1;
 import static ir.ac.kntu.TankGame.superPowers;
 
 public class Superpower {
@@ -52,19 +53,26 @@ public class Superpower {
         }
     }
 
-
     public SuperPowerType getSuperPowerType() {
         return superPowerType;
     }
 
     public void activateFreeze(){
-        System.out.println("Frozen");
+        Tank.setIsFreezeActive(true);
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5), event -> {
+                    Tank.setIsFreezeActive(false);
+                })
+        );
+        timeline.play();
     }
+
     public void activeStar(){
-        System.out.println("StarStruck");
+        p1.setBulletPower(2);
     }
+
     public void activeExtraLife(){
-        System.out.println("ExtraLife");
+        p1.setHealth(p1.getHealth()+1);
     }
 
     public void collectSuperPower(){
@@ -84,39 +92,12 @@ public class Superpower {
         this.superpowerImageView = superpowerImageView;
     }
 
-    /*public boolean collidesWith(Tank enemyTank) {
-        ImageView tankImageView = enemyTank.getTankImageView();
-        double tankX = tankImageView.getLayoutX();
-        double tankY = tankImageView.getLayoutY();
-        double tankWidth = tankImageView.getImage().getWidth();
-        double tankHeight = tankImageView.getImage().getHeight();
-
-        ImageView superpowerImageView = getSuperpowerImageView();
-        double superPowerX = superpowerImageView.getLayoutX();
-        double superPowerY = superpowerImageView.getLayoutY();
-        double superPowerWidth = superpowerImageView.getImage().getWidth();
-        double superPowerHeight = superpowerImageView.getImage().getHeight();
-
-        // Check for collision
-        if (superPowerX < tankX + tankWidth &&
-                superPowerX + superPowerWidth > tankX &&
-                superPowerY < tankY + tankHeight &&
-                superPowerY + superPowerHeight > tankY) {
-            System.out.println("yesssss");
-            return true; // Collision occurred
-        }
-        return false; // No collision
-    }*/
-
-    public boolean collidesWith(Tank tank) {
+    public boolean collidesWith(PlayerTank tank) {
         Bounds superpowerImageViewBoundsInParent = superpowerImageView.getBoundsInParent();
         Bounds tankBounds = tank.getTankImageView().getBoundsInParent();
         return superpowerImageViewBoundsInParent.intersects(tankBounds);
     }
 
-    public void handleCollision(PlayerTank playerTank) {
-        // Implement the logic to handle the collision with the player tank here
-    }
 
     public void addToPane(Pane root) {
         root.getChildren().add(superpowerImageView);
