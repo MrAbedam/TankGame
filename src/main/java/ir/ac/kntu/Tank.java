@@ -26,6 +26,7 @@ public class Tank {
     private int health;
     private Direction direction;
     private ArrayList<Bullet> bullets;
+    private int value;
 
     public Tank(int x, int y) {
         this.x = x;
@@ -37,6 +38,7 @@ public class Tank {
         tankImageView.setLayoutY(y);
         tankImageView.setLayoutY(y);
         allTanks.add(this);
+        this.value = getHealth()*100;
     }
 
     public static boolean isIsFreezeActive() {
@@ -146,7 +148,11 @@ public class Tank {
         double deathX = this.getX();
         double deathY = this.getY();
         allTanks.remove(this);
-        System.out.println("1 tank died !!");
+        if (this instanceof ArmoredTank){
+            playerScore += 200;
+        }else{
+            playerScore+= 100;
+        }
         root.getChildren().remove(this.getTankImageView());
         gradualExplosion(deathX, deathY, root);
     }

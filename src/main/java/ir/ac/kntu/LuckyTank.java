@@ -8,16 +8,19 @@ import java.util.Random;
 
 import static ir.ac.kntu.ArmoredTank.HEIGHT;
 import static ir.ac.kntu.ArmoredTank.WIDTH;
-import static ir.ac.kntu.TankGame.allTanks;
-import static ir.ac.kntu.TankGame.remainingTanks;
+import static ir.ac.kntu.TankGame.*;
 
 public class LuckyTank extends Tank {
+
+    private int value;
+
     public LuckyTank(int x, int y) {
         super(x,y);
         setTankImageView(new ImageView(new Image("images/LuckyEnemyTankDown.png")));
         getTankImageView().setLayoutX(x);
         getTankImageView().setLayoutY(y);
         setHealth(new Random().nextInt(2)+1); // 1 or 2
+        this.value = getHealth()*100;
         setDirection(Direction.DOWN);
     }
 
@@ -27,7 +30,7 @@ public class LuckyTank extends Tank {
         double deathX = this.getX();
         double deathY = this.getY();
         allTanks.remove(this);
-        System.out.println("1 tank died !!");
+        playerScore += value;
         root.getChildren().remove(this.getTankImageView());
         gradualExplosion(deathX,deathY,root);
         Superpower superpower = new Superpower(deathX,deathY,"images/ArmoredEnemyTankDown.png",root);

@@ -28,8 +28,11 @@ public class TankGame extends Application {
     public static Eagle eagle;
     private Pane root;
 
-    public static int mapSize = 700;
-    public static int remainingTanks = 12;
+    public static int mapSize = 500;
+    public static int remainingTanks = 4;
+    public static int currentLevel = 1;  // Start with level 1
+    public static int playerScore = 0;  // Player's score
+
 
     public GameState getGameState() {
         return gameState;
@@ -80,6 +83,17 @@ public class TankGame extends Application {
         root.getChildren().addAll(hitPointAmount,hitPoint);
     }
 
+    public void addScore(){
+        root.getChildren().removeIf(node -> node instanceof Text && ((Text) node).getText().startsWith("Current score:"));
+        Text scoreDisplay = new Text("Current score: " + playerScore);
+        scoreDisplay.setLayoutX(mapSize+40);
+        scoreDisplay.setLayoutY(300);
+        scoreDisplay.setFill(Color.WHITE);
+        double fontSize = 20;
+        scoreDisplay.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
+        root.getChildren().addAll(scoreDisplay);
+    }
+
     public void addRemainingTanks(){
         root.getChildren().removeIf(node -> node instanceof Text && ((Text) node).getText().startsWith("Remaining Tanks:"));
         Text remainingTanksText = new Text("Remaining Tanks: " + remainingTanks);
@@ -94,6 +108,7 @@ public class TankGame extends Application {
     public void updateStatus(){
         addRemainingTanks();
         addHp();
+        addScore();
     }
 
     public void spawnAnimation(){}
@@ -114,32 +129,51 @@ public class TankGame extends Application {
         return (new Random().nextInt(2)*(mapSize-60));
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        root = new Pane();
-        p1 = new PlayerTank(mapSize/2 - 80, mapSize -40);
+    public void gameSetup(){
+        p1 = new PlayerTank(mapSize/2 - 100, mapSize -40);
         eagle = new Eagle((mapSize/2), mapSize-50);
-        root.getChildren().addAll(eagle.getImgView(),p1.getTankImageView());
-        Scene scene = new Scene(root, mapSize+250, mapSize, Color.BLACK);
+        addMetalWall(mapSize/2+50,mapSize-50,root);
+        addMetalWall(mapSize/2-50,mapSize-50,root);
+        addMetalWall(mapSize/2,mapSize-150,root);
         addLuckyTank(0,0,root);
         addRegularTank(mapSize-50,mapSize-50,root);
         addArmoredTank(0,mapSize-50,root);
         addLuckyTank(mapSize-50,0,root);
         splitWall();
+        root.getChildren().addAll(eagle.getImgView(),p1.getTankImageView());
+    }
 
+    @Override
+    public void start(Stage primaryStage) {
 
+        root = new Pane();
+        Scene scene = new Scene(root, mapSize+250, mapSize, Color.BLACK);
+
+        gameState = GameState.MENU;
         scene.setOnKeyPressed(event -> {
-            KeyCode keyCode = event.getCode();
-            if (keyCode == KeyCode.LEFT) {
-                p1.moveLeft();
-            } else if (keyCode == KeyCode.RIGHT) {
-                p1.moveRight();
-            } else if (keyCode == KeyCode.UP) {
-                p1.moveUp();
-            } else if (keyCode == KeyCode.DOWN) {
-                p1.moveDown();
-            } else if (keyCode == KeyCode.SPACE) {
-                p1.shoot(root);
+            if (gameState == GameState.MENU) {
+                // Handle level selection in the MENU state
+                KeyCode keyCode = event.getCode();
+                if (keyCode.isDigitKey()) {
+                    int level = Integer.parseInt(keyCode.getName());
+                    if (level >= 1 && level <= 10) {
+                        startLevel(level);
+                    }
+                }
+            } else if (gameState == GameState.RUNNING) {
+                // Handle tank movement and shooting in the RUNNING state
+                KeyCode keyCode = event.getCode();
+                if (keyCode == KeyCode.LEFT) {
+                    p1.moveLeft();
+                } else if (keyCode == KeyCode.RIGHT) {
+                    p1.moveRight();
+                } else if (keyCode == KeyCode.UP) {
+                    p1.moveUp();
+                } else if (keyCode == KeyCode.DOWN) {
+                    p1.moveDown();
+                } else if (keyCode == KeyCode.SPACE) {
+                    p1.shoot(root);
+                }
             }
         });
 
@@ -158,8 +192,11 @@ public class TankGame extends Application {
                     updateHitsFromPlayer(p1);
                     updateHitsFromEnemies(p1);
                     updateSuperPower();
-                } else {
-                    System.out.println("You died");
+                    checkLevelCompletion();
+                } else if (gameState == GameState.WIN) {
+                    showWinPage();
+                } else if (gameState == GameState.GAME_OVER) {
+                    showGameOverPage();
                 }
             }
         };
@@ -221,7 +258,7 @@ public class TankGame extends Application {
                     break;
                 }
                 if (bullet.collidesWith(eagle)) {
-                    setGameState(GameState.ENDED); // Set game state to "END" if the eagle is hit
+                    setGameState(GameState.GAME_OVER); // Set game state to "END" if the eagle is hit
                     bulletsToRemove.add(bullet);
                     break;
                 }
@@ -279,6 +316,61 @@ public class TankGame extends Application {
                     testWall.handleBulletCollision(bullet, testWall, bulletIterator, wallIterator, root);
                 }
             }
+        }
+    }
+
+    private void showMenu() {
+        // Create and display the menu screen
+        Text menuText = new Text("Choose a level (1-10):");
+        menuText.setLayoutX(mapSize / 2 - 80);
+        menuText.setLayoutY(mapSize / 2 - 40);
+        menuText.setFill(Color.WHITE);
+        double fontSize = 20;
+        menuText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
+        root.getChildren().add(menuText);
+    }
+
+   private void startLevel(int level) {
+        // Start a new level with the specified level number
+
+        currentLevel = level;
+        remainingTanks = 10 + (level - 1) * 4;
+        allTanks.clear();
+        gameState = GameState.RUNNING;
+        root.getChildren().clear();
+        gameSetup();
+    }
+
+    private void showWinPage() {
+        // Display the win page
+        root.getChildren().clear();
+        Text winText = new Text("Congratulations! You've won this level!");
+        winText.setLayoutX(mapSize / 2 - 150);
+        winText.setLayoutY(mapSize / 2 - 40);
+        winText.setFill(Color.WHITE);
+        double fontSize = 20;
+        winText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
+        root.getChildren().add(winText);
+        System.out.println(playerScore);
+
+    }
+
+    private void showGameOverPage() {
+        // Display the game over page
+        root.getChildren().clear();
+        Text gameOverText = new Text("Game Over! You lost the game.");
+        gameOverText.setLayoutX(mapSize / 2 - 150);
+        gameOverText.setLayoutY(mapSize / 2 - 40);
+        gameOverText.setFill(Color.WHITE);
+        double fontSize = 20;
+        gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
+        root.getChildren().add(gameOverText);
+    }
+
+    private void checkLevelCompletion() {
+        // Check if all tanks are destroyed
+        if (remainingTanks == 0) {
+            gameState = GameState.WIN;
         }
     }
 

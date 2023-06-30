@@ -90,7 +90,7 @@ public class PlayerTank extends Tank {
             }
             System.out.println("oo im dead");
             root.getChildren().remove(this.getTankImageView());
-            gameState = GameState.ENDED;
+            gameState = GameState.GAME_OVER;
             gradualExplosion(p1.getX(),p1.getY(),root);
         }
 
