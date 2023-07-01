@@ -12,12 +12,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -161,22 +164,35 @@ public class TankGame extends Application {
     }
 
     public int giveSpawnPoint() {
-        return (new Random().nextInt(2) * (mapSize - 60));
+        return (new Random().nextInt(2) * (mapSize - 100));
     }
 
     public void gameSetup() {
         p1 = new PlayerTank(mapSize / 2 - 100, mapSize - 40);
         p1.setHealth(storedHealth);
         eagle = new Eagle((mapSize / 2), mapSize - 50);
-        addMetalWall(mapSize / 2 + 50, mapSize - 50, root);
-        addMetalWall(mapSize / 2 - 50, mapSize - 50, root);
-        addMetalWall(mapSize / 2, mapSize - 150, root);
+        addSimpleWall(mapSize / 2 + 50, mapSize - 50, root);
+        addSimpleWall(mapSize / 2 - 50, mapSize - 50, root);
+        addSimpleWall(mapSize / 2, mapSize - 100, root);
         addLuckyTank(0, 0, root);
         addRegularTank(mapSize - 50, mapSize - 50, root);
         addArmoredTank(0, mapSize - 50, root);
         addLuckyTank(mapSize - 50, 0, root);
         splitWall();
-        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView());
+        Image pauseImage = new Image("images/Pause.png"); // Replace "pause.png" with the path to your image
+        ImageView pauseImageView = new ImageView(pauseImage);
+        pauseImageView.setPreserveRatio(true);
+        pauseImageView.setLayoutX(mapSize+100);
+        pauseImageView.setLayoutY(50);
+        EventHandler<MouseEvent> pauseEventHandler = event -> {
+            if (gameState == GameState.PAUSED){
+                setGameState(GameState.RUNNING);
+            }else {
+                setGameState(GameState.PAUSED);
+            }
+        };
+        pauseImageView.setOnMouseClicked(pauseEventHandler);
+        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(),pauseImageView);
     }
 
 
@@ -218,6 +234,14 @@ public class TankGame extends Application {
                     p1.moveDown();
                 } else if (keyCode == KeyCode.SPACE) {
                     p1.shoot(root);
+                } else if (keyCode == KeyCode.P) {
+                    pauseGame();
+                }
+            } else if (gameState == GameState.PAUSED) {
+                // Handle resuming the game from PAUSED state
+                KeyCode keyCode = event.getCode();
+                if (keyCode == KeyCode.P) {
+                    resumeGame();
                 }
             }
         });
@@ -228,8 +252,7 @@ public class TankGame extends Application {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-
-                if (GameState.RUNNING == getGameState()) {
+                if (gameState == GameState.RUNNING) {
                     spawnTank();
                     updateStatus();
                     updateBullets();
@@ -248,6 +271,17 @@ public class TankGame extends Application {
 
         gameLoop.start();
     }
+
+    private void pauseGame() {
+        gameState = GameState.PAUSED;
+        // Perform any additional tasks when the game is paused
+    }
+
+    private void resumeGame() {
+        gameState = GameState.RUNNING;
+        // Perform any additional tasks when the game is resumed
+    }
+
 
     private void updateTanks() {
         Iterator<Tank> iterator = allTanks.iterator();
@@ -366,15 +400,38 @@ public class TankGame extends Application {
 
     private void showMenu() {
         // Create and display the menu screen
-        Text menuText = new Text("Enter a level (1-10):");
-        menuText.setLayoutX(mapSize / 2);
-        menuText.setLayoutY(mapSize / 2);
-        menuText.setFill(Color.WHITE);
-        double fontSize = 20;
-        menuText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        menuText.setFill(Color.WHITE);
-        root.getChildren().add(menuText);
-        System.out.println("AA");
+        int numOfRectangles = 10;
+        double rectangleSize = 50;
+        double spacing = 10;
+        double startX = (mapSize - (numOfRectangles * (rectangleSize + spacing))) / 2;
+        double startY = (mapSize - rectangleSize) / 2;
+
+        for (int i = 0; i < numOfRectangles; i++) {
+            Rectangle rectangle = new Rectangle(100+startX + i * (rectangleSize + spacing), startY, rectangleSize, rectangleSize);
+            showLevelOption(rectangle,i);
+        }
+    }
+
+    private void showLevelOption(Rectangle rectangle,int i){
+
+        rectangle.setFill(Color.PINK);
+        Text levelText = new Text(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2, String.valueOf(i + 1));
+        levelText.setFill(Color.WHITE);
+        levelText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        levelText.setTextAlignment(TextAlignment.CENTER);
+        levelText.setTranslateX(-levelText.getBoundsInLocal().getWidth() / 2);
+        levelText.setTranslateY(levelText.getBoundsInLocal().getHeight() / 4);
+        int finalI = i;
+        rectangle.setId(String.valueOf(i + 1));
+        rectangle.setOnMouseClicked(event -> handleLevelSelection(finalI + 1));
+        root.getChildren().addAll(rectangle,levelText);
+    }
+
+    private void handleLevelSelection(int level) {
+        // Handle the level selection here
+        System.out.println("Selected Level: " + level);
+        // Enter the selected level
+        startLevel(level);
     }
 
     private void startLevel(int level) {
@@ -399,7 +456,15 @@ public class TankGame extends Application {
             winText.setFill(Color.WHITE);
             winText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
             root.getChildren().add(winText);
-            //need delay over here
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.ZERO, event -> {
+                        setGameState(GameState.PAUSED);
+                    }),
+                    new KeyFrame(Duration.seconds(5), event -> {
+                        setGameState(GameState.RUNNING);
+                    })
+            );
+            timeline.play();
             startLevel(currentLevel + 1);
         } else {
             showEndGamePage(); // Show "You ended the game" message
@@ -419,13 +484,19 @@ public class TankGame extends Application {
     private void showGameOverPage() {
         // Display the game over page
         root.getChildren().clear();
+        Image gameOverImage = new Image("images/GameOver.png"); // Replace "pause.png" with the path to your image
+        ImageView gameOverImageView = new ImageView(gameOverImage);
+        gameOverImageView.setPreserveRatio(true);
+        gameOverImageView.setLayoutX(mapSize/2);
+        gameOverImageView.setLayoutY(50);
+        gameOverImageView.setFitWidth(300);
         Text gameOverText = new Text("Game Over! You lost the game.");
         gameOverText.setLayoutX(mapSize / 2);
         gameOverText.setLayoutY(mapSize / 2);
         gameOverText.setFill(Color.RED);
         double fontSize = 20;
         gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        root.getChildren().add(gameOverText);
+        root.getChildren().addAll(gameOverImageView,gameOverText);
     }
 
     private void checkLevelCompletion() {
@@ -444,5 +515,5 @@ public class TankGame extends Application {
         launch(args);
     }
 
-    //to do : 1. read map from file, 2.fix menu click options 3. add highscore to menu, 4. add sign in to menu 5.add pause
+    //to do : 1. read map from file, 3. add highscore to menu, 4. add sign in to menu
 }
