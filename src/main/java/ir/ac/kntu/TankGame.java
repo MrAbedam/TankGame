@@ -4,11 +4,12 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -16,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -24,13 +26,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.security.cert.CertPath;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 import static ir.ac.kntu.Wall.allWalls;
 import static java.lang.Thread.sleep;
@@ -42,7 +39,7 @@ public class TankGame extends Application {
     public static GameState gameState = GameState.RUNNING;
     public static PlayerTank p1;
     public static Eagle eagle;
-    private Pane root = new Pane();
+    public static Pane root = new Pane();
     private Scene scene;
 
     public static int storedHealth = 3;
@@ -50,11 +47,13 @@ public class TankGame extends Application {
     public static int remainingTanks = 4;
     public static int playerScore = 0;  // Player's score
 
+
     public static int curLucky = 0;
     public static int curArmored = 0;
     public static int curRegular = 0;
     static char[][] setupMap;
-
+    static String userName;
+    static Leaderboard leaderboard = new Leaderboard();
 
     public GameState getGameState() {
         return gameState;
@@ -62,22 +61,22 @@ public class TankGame extends Application {
 
     private int currentLevel;
 
-    public TankGame() {
-        // Constructor logic goes here
+    public TankGame(){
+
     }
 
     public TankGame(int level) {
         this.currentLevel = level;
     }
 
-    public void addMetalWall(double x, double y, Pane root) {
+    public void addMetalWall(double x, double y) {
         MetalWall metalWall = new MetalWall(x, y);
-        metalWall.addToPane(root);
+        metalWall.addToPane();
     }
 
-    public void addSimpleWall(int x, int y, Pane root) {
+    public void addSimpleWall(int x, int y ) {
         SimpleWall simpleWall = new SimpleWall(x, y);
-        simpleWall.addToPane(root);
+        simpleWall.addToPane();
     }
 
     public void addArmoredTank(int x, int y, Pane root) {
@@ -100,10 +99,10 @@ public class TankGame extends Application {
 
     public void splitWall() {
         for (int i = 0; i < mapSize; i = i + 50) {
-            addMetalWall(mapSize, i, root);
+            addMetalWall(mapSize, i);
         }
         for (int i = 0; i < mapSize + 150; i = i + 50) {
-            addMetalWall(i, mapSize, root);
+            addMetalWall(i, mapSize);
         }
     }
 
@@ -196,11 +195,12 @@ public class TankGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        System.out.println("Enter name");
+        userName = new Scanner(System.in).nextLine();
 
         readMapFromFile();
         root = new Pane();
         scene = new Scene(root, mapSize + 400, mapSize+150, Color.BLACK);
-
         showMenu();
         gameState = GameState.MENU;
         scene.setOnKeyPressed(event -> {
@@ -255,13 +255,21 @@ public class TankGame extends Application {
                     checkLevelCompletion();
                 } else if (gameState == GameState.WIN) {
                     showWinPage();
+                    if (currentLevel == 10){
+                        stop();
+                    }
                 } else if (gameState == GameState.GAME_OVER) {
                     showGameOverPage();
+                    stop();
                 }
             }
         };
 
         gameLoop.start();
+    }
+
+    public void showLeaderboard(){
+
     }
 
     private void pauseGame() {
@@ -431,11 +439,11 @@ public class TankGame extends Application {
         currentLevel = level;
         remainingTanks = 10 + (level - 1) * 4;
         allTanks.clear();
+        allWalls.clear();
         gameState = GameState.RUNNING;
         root.getChildren().clear();
         gameSetup();
     }
-//storedHealth = p1.getHealth();
 
     private void showWinPage() {
         // Clear the root pane
@@ -481,10 +489,14 @@ public class TankGame extends Application {
         endGameText.setFill(Color.WHITE);
         endGameText.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 30));
         root.getChildren().add(endGameText);
+        Player newPlayer = new Player(userName,playerScore);
+        leaderboard.addPlayer(newPlayer);
+        leaderboard.showLeaderboard();
     }
 
     private void showGameOverPage() {
         // Display the game over page
+        LeaderboardWriter.writeLeaderboardToFile(leaderboard);
         root.getChildren().clear();
         Image gameOverImage = new Image("images/GameOver.png"); // Replace "pause.png" with the path to your image
         ImageView gameOverImageView = new ImageView(gameOverImage);
@@ -499,7 +511,12 @@ public class TankGame extends Application {
         double fontSize = 20;
         gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(gameOverImageView,gameOverText);
+        Player newPlayer = new Player(userName,playerScore);
+        leaderboard.addPlayer(newPlayer);
+        leaderboard.showLeaderboard();
+
     }
+
 
     private void checkLevelCompletion() {
         // Check if all tanks are destroyed
@@ -516,9 +533,9 @@ public class TankGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
     public void makeMapFromFile() {
-        mapSize = setupMap.length * 50 ;
+        System.out.println(currentLevel);
+        mapSize = setupMap.length * 50;
         for (int i = 0; i < setupMap.length; i++) {
             for (int j = 0; j < setupMap[i].length; j++) {
                 int spawnX = i * 50;
@@ -528,8 +545,8 @@ public class TankGame extends Application {
                     case 'O' -> addRegularTank(spawnX, spawnY, root);
                     case 'A' -> addArmoredTank(spawnX, spawnY, root);
                     case 'F' -> eagle = new Eagle(spawnX, spawnY);
-                    case 'M' -> addMetalWall(spawnX, spawnY, root);
-                    case 'B' -> addSimpleWall(spawnX, spawnY, root);
+                    case 'M' -> addMetalWall(spawnX, spawnY);
+                    case 'B' -> addSimpleWall(spawnX, spawnY);
                     case 'C' -> addLuckyTank(spawnX, spawnY, root);
                 }
             }
@@ -539,6 +556,7 @@ public class TankGame extends Application {
 
 
     public void gameSetup() {
+
         makeMapFromFile();
         p1.setHealth(storedHealth);
         splitWall();
@@ -557,6 +575,7 @@ public class TankGame extends Application {
         pauseImageView.setOnMouseClicked(pauseEventHandler);
         root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(),pauseImageView);
     }
+
 
     public static void readMapFromFile() {
         try {

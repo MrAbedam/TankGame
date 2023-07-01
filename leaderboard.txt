@@ -1,0 +1,8 @@
+mmdk,10000
+slimshady,7500
+winnet,6700
+asdasda,4400
+asdasdad,4100
+adasdasdadad,2900
+asdasd,1700
+aaa,800
