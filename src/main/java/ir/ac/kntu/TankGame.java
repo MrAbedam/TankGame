@@ -255,11 +255,13 @@ public class TankGame extends Application {
                     checkLevelCompletion();
                 } else if (gameState == GameState.WIN) {
                     showWinPage();
-                    if (currentLevel == 10){
-                        stop();
-                    }
                 } else if (gameState == GameState.GAME_OVER) {
                     showGameOverPage();
+                    stop();
+                } else if(gameState == GameState.COMPLETED){
+                    root.getChildren().clear();
+                    completeGamePage();
+                    showEndGameLeaderboard();
                     stop();
                 }
             }
@@ -447,6 +449,10 @@ public class TankGame extends Application {
 
     private void showWinPage() {
         // Clear the root pane
+        if (currentLevel==10){
+            gameState = GameState.COMPLETED;
+            return;
+        }
         root.getChildren().clear();
         storedHealth = p1.getHealth();
         if (currentLevel != 10) {
@@ -476,22 +482,25 @@ public class TankGame extends Application {
             );
             timeline.play();
             startLevel(currentLevel + 1);
-        } else {
-            showEndGamePage(); // Show "You ended the game" message
         }
     }
 
+    static int loopPrevention = 0;
 
-    public void showEndGamePage() {
+    public void showEndGameLeaderboard() {
+        Player newPlayer = new Player(userName,playerScore);
+        leaderboard.addPlayer(newPlayer);
+        leaderboard.showLeaderboard();
+        System.out.println("Game Completed");
+    }
+
+    public void completeGamePage(){
         Text endGameText = new Text("You have completed this game, WELL PLAYED.");
         endGameText.setLayoutX(50);
         endGameText.setLayoutY(mapSize / 2);
         endGameText.setFill(Color.WHITE);
         endGameText.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 30));
         root.getChildren().add(endGameText);
-        Player newPlayer = new Player(userName,playerScore);
-        leaderboard.addPlayer(newPlayer);
-        leaderboard.showLeaderboard();
     }
 
     private void showGameOverPage() {
@@ -534,7 +543,6 @@ public class TankGame extends Application {
         launch(args);
     }
     public void makeMapFromFile() {
-        System.out.println(currentLevel);
         mapSize = setupMap.length * 50;
         for (int i = 0; i < setupMap.length; i++) {
             for (int j = 0; j < setupMap[i].length; j++) {
