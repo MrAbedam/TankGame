@@ -48,6 +48,10 @@ public class TankGame extends Application {
     public static int remainingTanks = 4;
     public static int playerScore = 0;  // Player's score
 
+    public static int curLucky = 0;
+    public static int curArmored = 0;
+    public static int curRegular = 0;
+
 
     public GameState getGameState() {
         return gameState;
@@ -75,16 +79,19 @@ public class TankGame extends Application {
 
     public void addArmoredTank(int x, int y, Pane root) {
         ArmoredTank t1 = new ArmoredTank(x, y);
+        curArmored++;
         root.getChildren().add(t1.getTankImageView());
     }
 
     public void addRegularTank(int x, int y, Pane root) {
         Tank t1 = new Tank(x, y);
+        curRegular++;
         root.getChildren().add(t1.getTankImageView());
     }
 
     public void addLuckyTank(int x, int y, Pane root) {
         LuckyTank t1 = new LuckyTank(x, y);
+        curLucky++;
         root.getChildren().add(t1.getTankImageView());
     }
 
@@ -148,17 +155,21 @@ public class TankGame extends Application {
         addCurrentLevel();
     }
 
-    public void spawnAnimation() {
-    }
 
     public void spawnTank() {
         if (remainingTanks >= 4 && allTanks.size() <= 4) {
             int xSpawn = giveSpawnPoint();
             int ySpawn = giveSpawnPoint();
             switch (remainingTanks % 3) {
-                case 0 -> addArmoredTank(xSpawn, ySpawn, root);
-                case 1 -> addRegularTank(xSpawn, ySpawn, root);
-                case 2 -> addLuckyTank(xSpawn, ySpawn, root);
+                case 0 -> {
+                    addArmoredTank(xSpawn, ySpawn, root);
+                }
+                case 1 -> {
+                    addRegularTank(xSpawn, ySpawn, root);
+                }
+                default -> {
+                    addLuckyTank(xSpawn, ySpawn, root);
+                }
             }
         }
     }
@@ -450,17 +461,26 @@ public class TankGame extends Application {
         root.getChildren().clear();
         storedHealth = p1.getHealth();
         if (currentLevel != 10) {
-            Text winText = new Text("Congratulations! You won the level! You will go to the next level after 5 seconds");
+            Text winText = new Text("You won the level! Next level will start in 5 seconds, Score: "+playerScore);
+            Text tankKills = new Text("Kill count: Lucky, Armored, Regular: "+ curLucky+", "+curArmored+", "+curRegular);
+            curArmored = 0;
+            curLucky = 0;
+            curRegular = 0;
+            tankKills.setLayoutX(100);
+            tankKills.setLayoutY(mapSize/2+100);
             winText.setLayoutX(50);
-            winText.setLayoutY(50);
-            winText.setFill(Color.WHITE);
-            winText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-            root.getChildren().add(winText);
+            winText.setLayoutY(mapSize/2);
+            winText.setFill(Color.GREEN);
+            tankKills.setFill(Color.BLUE);
+            tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            winText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, event -> {
                         setGameState(GameState.PAUSED);
+                        root.getChildren().addAll(tankKills,winText);
                     }),
                     new KeyFrame(Duration.seconds(5), event -> {
+                        root.getChildren().removeAll(tankKills,winText);
                         setGameState(GameState.RUNNING);
                     })
             );
