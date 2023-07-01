@@ -34,7 +34,7 @@ public class Tank {
         this.health = 1;
         this.direction = Direction.UP;
         this.bullets = new ArrayList<Bullet>();
-        setTankImageView(new ImageView(new Image("images/RegularEnemyTankUp.png")));
+        setTankImageView(new ImageView(new Image("images/RegularEnemyTankDown.png")));
         tankImageView.setLayoutY(y);
         tankImageView.setLayoutY(y);
         allTanks.add(this);
@@ -201,13 +201,13 @@ public class Tank {
         double xDiff = Math.abs(playerTank.getX() - getX());
         double yDiff = Math.abs(playerTank.getY() - getY());
 
-        if (xDiff > 100) {
+        if (xDiff > mapSize/2) {
             if (playerTank.getX() < getX()) {
                 moveLeft();
             } else {
                 moveRight();
             }
-        } else if (yDiff > 100) {
+        } else if (yDiff > mapSize/2) {
             if (playerTank.getY() < getY()) {
                 moveUp();
             } else {

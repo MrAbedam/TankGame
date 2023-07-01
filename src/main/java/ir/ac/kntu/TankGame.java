@@ -24,6 +24,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.cert.CertPath;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,6 +53,7 @@ public class TankGame extends Application {
     public static int curLucky = 0;
     public static int curArmored = 0;
     public static int curRegular = 0;
+    static char[][] setupMap;
 
 
     public GameState getGameState() {
@@ -99,9 +102,13 @@ public class TankGame extends Application {
         for (int i = 0; i < mapSize; i = i + 50) {
             addMetalWall(mapSize, i, root);
         }
+        for (int i = 0; i < mapSize + 150; i = i + 50) {
+            addMetalWall(i, mapSize, root);
+        }
     }
 
     public String healthToString() {
+        if (p1==null) return "3";
         return ("images/" + p1.getHealth() + ".png");
     }
 
@@ -159,52 +166,25 @@ public class TankGame extends Application {
     public void spawnTank() {
         if (remainingTanks >= 4 && allTanks.size() <= 4) {
             int xSpawn = giveSpawnPoint();
-            int ySpawn = giveSpawnPoint();
             switch (remainingTanks % 3) {
                 case 0 -> {
-                    addArmoredTank(xSpawn, ySpawn, root);
+                    addArmoredTank(xSpawn, 0, root);
                 }
                 case 1 -> {
-                    addRegularTank(xSpawn, ySpawn, root);
+                    addRegularTank(xSpawn, 0, root);
                 }
                 default -> {
-                    addLuckyTank(xSpawn, ySpawn, root);
+                    addLuckyTank(xSpawn, 0, root);
                 }
             }
         }
     }
 
     public int giveSpawnPoint() {
-        return (new Random().nextInt(2) * (mapSize - 100));
+        return (new Random().nextInt(4) * (mapSize/3 - 20));
     }
 
-    public void gameSetup() {
-        p1 = new PlayerTank(mapSize / 2 - 100, mapSize - 40);
-        p1.setHealth(storedHealth);
-        eagle = new Eagle((mapSize / 2), mapSize - 50);
-        addSimpleWall(mapSize / 2 + 50, mapSize - 50, root);
-        addSimpleWall(mapSize / 2 - 50, mapSize - 50, root);
-        addSimpleWall(mapSize / 2, mapSize - 100, root);
-        addLuckyTank(0, 0, root);
-        addRegularTank(mapSize - 50, mapSize - 50, root);
-        addArmoredTank(0, mapSize - 50, root);
-        addLuckyTank(mapSize - 50, 0, root);
-        splitWall();
-        Image pauseImage = new Image("images/Pause.png"); // Replace "pause.png" with the path to your image
-        ImageView pauseImageView = new ImageView(pauseImage);
-        pauseImageView.setPreserveRatio(true);
-        pauseImageView.setLayoutX(mapSize+100);
-        pauseImageView.setLayoutY(50);
-        EventHandler<MouseEvent> pauseEventHandler = event -> {
-            if (gameState == GameState.PAUSED){
-                setGameState(GameState.RUNNING);
-            }else {
-                setGameState(GameState.PAUSED);
-            }
-        };
-        pauseImageView.setOnMouseClicked(pauseEventHandler);
-        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(),pauseImageView);
-    }
+
 
 
     private Button createLevelButton(int level) {
@@ -217,8 +197,9 @@ public class TankGame extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        readMapFromFile();
         root = new Pane();
-        scene = new Scene(root, mapSize + 250, mapSize, Color.BLACK);
+        scene = new Scene(root, mapSize + 400, mapSize+150, Color.BLACK);
 
         showMenu();
         gameState = GameState.MENU;
@@ -462,18 +443,19 @@ public class TankGame extends Application {
         storedHealth = p1.getHealth();
         if (currentLevel != 10) {
             Text winText = new Text("You won the level! Next level will start in 5 seconds, Score: "+playerScore);
-            Text tankKills = new Text("Kill count: Lucky, Armored, Regular: "+ curLucky+", "+curArmored+", "+curRegular);
+            Text tankKills = new Text("Lucky, Armored, Regular:" +
+                    " "+ curLucky+", "+curArmored+", "+curRegular);
             curArmored = 0;
             curLucky = 0;
             curRegular = 0;
             tankKills.setLayoutX(100);
-            tankKills.setLayoutY(mapSize/2+100);
-            winText.setLayoutX(50);
-            winText.setLayoutY(mapSize/2);
+            tankKills.setLayoutY(mapSize/2-60);
+            winText.setLayoutX(10);
+            winText.setLayoutY(mapSize/2-30);
             winText.setFill(Color.GREEN);
             tankKills.setFill(Color.BLUE);
-            tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-            winText.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            winText.setFont(Font.font("Arial", FontWeight.BOLD, 36));
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, event -> {
                         setGameState(GameState.PAUSED);
@@ -534,6 +516,79 @@ public class TankGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    public void makeMapFromFile() {
+        mapSize = setupMap.length * 50 ;
+        for (int i = 0; i < setupMap.length; i++) {
+            for (int j = 0; j < setupMap[i].length; j++) {
+                int spawnX = i * 50;
+                int spawnY = j * 50;
+                switch (setupMap[j][i]) {
+                    case 'P' -> p1 = new PlayerTank(spawnX, spawnY);
+                    case 'O' -> addRegularTank(spawnX, spawnY, root);
+                    case 'A' -> addArmoredTank(spawnX, spawnY, root);
+                    case 'F' -> eagle = new Eagle(spawnX, spawnY);
+                    case 'M' -> addMetalWall(spawnX, spawnY, root);
+                    case 'B' -> addSimpleWall(spawnX, spawnY, root);
+                    case 'C' -> addLuckyTank(spawnX, spawnY, root);
+                }
+            }
+        }
+    }
+
+
+
+    public void gameSetup() {
+        makeMapFromFile();
+        p1.setHealth(storedHealth);
+        splitWall();
+        Image pauseImage = new Image("images/Pause.png"); // Replace "pause.png" with the path to your image
+        ImageView pauseImageView = new ImageView(pauseImage);
+        pauseImageView.setPreserveRatio(true);
+        pauseImageView.setLayoutX(mapSize+100);
+        pauseImageView.setLayoutY(50);
+        EventHandler<MouseEvent> pauseEventHandler = event -> {
+            if (gameState == GameState.PAUSED){
+                setGameState(GameState.RUNNING);
+            }else {
+                setGameState(GameState.PAUSED);
+            }
+        };
+        pauseImageView.setOnMouseClicked(pauseEventHandler);
+        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(),pauseImageView);
+    }
+
+    public static void readMapFromFile() {
+        try {
+            Scanner fileScanner = new Scanner(new File("C:\\Users\\intech\\Desktop\\poj4\\project4\\map.txt"));
+
+            ArrayList<String> lines = new ArrayList<>();
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine().trim();
+                if (!line.isEmpty()) {
+                    lines.add(line);
+                }
+            }
+
+            int rows = lines.size();
+            int columns = lines.get(0).length();
+
+            setupMap = new char[rows][columns];
+
+            // Fill the setup map array
+            for (int i = 0; i < rows; i++) {
+                String curLine = lines.get(i);
+                for (int j = 0; j < columns; j++) {
+                    setupMap[i][j] = curLine.charAt(j);
+                }
+            }
+
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //to do : 1. read map from file, 3. add highscore to menu, 4. add sign in to menu
 }
