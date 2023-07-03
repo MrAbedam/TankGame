@@ -178,13 +178,13 @@ public class TankGame extends Application {
             int xSpawn = giveSpawnPoint();
             switch (remainingTanks % 3) {
                 case 0 -> {
-                    addArmoredTank(xSpawn, 5, root);
+                    addArmoredTank(xSpawn, 15, root);
                 }
                 case 1 -> {
-                    addRegularTank(xSpawn, 5, root);
+                    addRegularTank(xSpawn, 15, root);
                 }
                 default -> {
-                    addLuckyTank(xSpawn, 5, root);
+                    addLuckyTank(xSpawn, 15, root);
                 }
             }
         }
@@ -553,6 +553,8 @@ public class TankGame extends Application {
         gameSetup();
     }
 
+    public static int getIn = 0;
+
     private void showWinPage() {
         // Clear the root pane
         if (currentLevel == 10) {
@@ -561,33 +563,53 @@ public class TankGame extends Application {
         }
         root.getChildren().clear();
         storedHealth = p1.getHealth();
-        if (currentLevel != 10) {
-            Text winText = new Text("You won the level! Next level will start in 5 seconds, Score: " + playerScore);
+        if (currentLevel != 10 && getIn == 0) {
+            getIn = 1;
+            Pane winRoot = new Pane();
+            winRoot.setStyle("-fx-background-color: #f88e55;");
+            Stage winStage = new Stage();
+            Scene winScene = new Scene(winRoot,500,500);
+            winStage.setScene(winScene);
+            winStage.show();
+            Text winText = new Text("You won the level "+userName+" ! Score: " + playerScore);
             Text tankKills = new Text("Lucky, Armored, Regular:" +
                     " " + curLucky + ", " + curArmored + ", " + curRegular);
+
+            tankKills.setFill(Color.BLUE);
+            tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            tankKills.setLayoutX(100);
+            tankKills.setLayoutY(100);
+
             curArmored = 0;
             curLucky = 0;
             curRegular = 0;
-            tankKills.setLayoutX(100);
-            tankKills.setLayoutY(mapSize / 2 - 60);
-            winText.setLayoutX(10);
-            winText.setLayoutY(mapSize / 2 - 30);
+            winText.setLayoutX(50);
+            winText.setLayoutY(300);
             winText.setFill(Color.GREEN);
-            tankKills.setFill(Color.BLUE);
-            tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-            winText.setFont(Font.font("Arial", FontWeight.BOLD, 36));
-            Timeline timeline = new Timeline(
-                    new KeyFrame(Duration.ZERO, event -> {
-                        setGameState(GameState.PAUSED);
-                        root.getChildren().addAll(tankKills, winText);
-                    }),
-                    new KeyFrame(Duration.seconds(5), event -> {
-                        root.getChildren().removeAll(tankKills, winText);
-                        setGameState(GameState.RUNNING);
-                    })
-            );
-            timeline.play();
-            startLevel(currentLevel + 1);
+            winText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            winText.setTextAlignment(TextAlignment.CENTER);
+
+            Button winButton = new Button("Next level");
+            winButton.setLayoutX(225);
+            winButton.setLayoutY(400);
+
+            ImageView luckyImage = new ImageView(new Image("images/LuckyEnemyTankUp.png"));
+            ImageView armoredImage = new ImageView(new Image("images/ArmoredEnemyTankUp.png"));
+            ImageView regularImage = new ImageView(new Image("images/RegularEnemyTankUp.png"));
+
+            luckyImage.setLayoutX(120);
+            armoredImage.setLayoutX(200);
+            regularImage.setLayoutX(280);
+
+            luckyImage.setLayoutY(130);
+            armoredImage.setLayoutY(130);
+            regularImage.setLayoutY(130);
+            winButton.setOnMouseClicked(event -> {
+                getIn = 0;
+                winStage.close();
+                startLevel(currentLevel + 1);
+            });
+            winRoot.getChildren().addAll(luckyImage,armoredImage,regularImage,winButton,winText,tankKills);
         }
     }
 

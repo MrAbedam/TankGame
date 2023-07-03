@@ -91,15 +91,6 @@ public class Bullet {
         return false; // No collision
     }
 
-    public Tank getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Tank owner) {
-        this.owner = owner;
-    }
-
-
     public static void removeBulletFromTank(Pane root, Bullet currentBullet) {
         for (Tank testTank : allTanks) {
             if (!testTank.getBullets().isEmpty()) {
@@ -125,17 +116,6 @@ public class Bullet {
         Bounds bulletBounds = bulletImageView.getBoundsInParent();
         Bounds eagleBounds = eagle.getImgView().getBoundsInParent();
         return bulletBounds.intersects(eagleBounds);
-    }
-
-    public void setDestroyed(boolean destroyed, Pane root) {
-        this.destroyed = destroyed;
-        if (destroyed) {
-            root.getChildren().remove(bulletImageView);
-        }
-    }
-
-    public boolean isDestroyed() {
-        return destroyed;
     }
 
     public void setDestroyed(boolean destroyed) {

@@ -41,7 +41,7 @@ public class Tank {
         this.x = x;
         this.y = y;
         this.health = 1;
-        this.direction = Direction.UP;
+        this.direction = Direction.DOWN;
         this.bullets = new ArrayList<Bullet>();
         setTankImageView(new ImageView(new Image("images/RegularEnemyTankDown.png")));
         tankImageView.setLayoutY(y);
