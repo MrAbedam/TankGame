@@ -1,19 +1,34 @@
 package ir.ac.kntu;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
-public class LeaderboardWriter {
-    public static void writeLeaderboardToFile(Leaderboard leaderboard) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("leaderboard.txt"))) {
-            for (Player player : leaderboard.getPlayers()) {
-                writer.write(player.getName() + "," + player.getScore() +","+player.getNumberOfGames()+ System.lineSeparator());
-            }
-            System.out.println("Leaderboard data written to file successfully.");
+public class LeaderboardWriter implements Serializable{
+    public static void writeLeaderBoard(Leaderboard leaderboard){
+        File file = new File("leaderboard.txt");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(leaderboard);
         } catch (IOException e) {
-            System.out.println("An error occurred while writing leaderboard data to file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+
+    public static Leaderboard readLeaderBoard() {
+        Leaderboard leaderboard = null;
+        File file = new File("leaderboard.txt");
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            leaderboard = (Leaderboard) objectInputStream.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return leaderboard;
+    }
+
+
 }

@@ -264,7 +264,7 @@ public class TankGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
+        leaderboard = LeaderboardWriter.readLeaderBoard();
         userNameInputWindow();
         if (doesUserExist(userName)){
             showUserStats(userName);
@@ -272,11 +272,8 @@ public class TankGame extends Application {
         //userName = "mmdabed";
         root = new Pane();
         Scene scene = new Scene(root, mapSize + 400, mapSize + 150, Color.BLACK);
-
-        System.out.println("1");
-        scene.setFill(Color.BLACK);
+        root.setStyle("-fx-background-color: #000000;");
         primaryStage.setScene(scene);
-        System.out.println("2");
         readMapFromFile();
         showMenu();
         gameState = GameState.MENU;
@@ -332,11 +329,13 @@ public class TankGame extends Application {
                 } else if (gameState == GameState.GAME_OVER) {
                     stop();
                     showGameOverPage(primaryStage);
+                    LeaderboardWriter.writeLeaderBoard(leaderboard);
                 } else if (gameState == GameState.COMPLETED) {
                     root.getChildren().clear();
                     stop();
                     completeGamePage();
                     showLeaderboard(primaryStage);
+                    LeaderboardWriter.writeLeaderBoard(leaderboard);
                 }
             }
         };
@@ -604,7 +603,7 @@ public class TankGame extends Application {
 
     private void showGameOverPage(Stage primaryStage) {
         // Display the game over page
-        LeaderboardWriter.writeLeaderboardToFile(leaderboard);
+        LeaderboardWriter.writeLeaderBoard(leaderboard);
         root.getChildren().clear();
         Image gameOverImage = new Image("images/GameOver.png"); // Replace "pause.png" with the path to your image
         ImageView gameOverImageView = new ImageView(gameOverImage);
@@ -620,6 +619,7 @@ public class TankGame extends Application {
         gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(gameOverImageView, gameOverText);
         showLeaderboard(primaryStage);
+
     }
 
 

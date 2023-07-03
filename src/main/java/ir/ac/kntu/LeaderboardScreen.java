@@ -14,6 +14,7 @@ import java.util.List;
 public class LeaderboardScreen extends Stage {
     private List<Player> leaderboard;
 
+
     public LeaderboardScreen(List<Player> leaderboard) {
         this.leaderboard = leaderboard;
         setTitle("Top 5 Players");
