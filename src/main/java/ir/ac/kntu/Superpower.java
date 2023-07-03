@@ -15,13 +15,18 @@ import static ir.ac.kntu.TankGame.p1;
 import static ir.ac.kntu.TankGame.superPowers;
 
 public class Superpower {
-    private ImageView superpowerImageView;
-    private double x;
-    private double y;
-    private Timeline timer;
-    private Pane root;
-    private SuperPowerType superPowerType;
 
+    private ImageView superpowerImageView;
+
+    private double x;
+
+    private double y;
+
+    private Timeline timer;
+
+    private Pane root;
+
+    private SuperPowerType superPowerType;
 
     public Superpower(double x, double y, String imagePath, Pane root) {
         this.x = x;

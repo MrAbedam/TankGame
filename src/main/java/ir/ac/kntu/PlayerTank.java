@@ -28,8 +28,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void moveLeft() {
-        if (cantMoveTo(getX() - 5, getY(), Direction.LEFT)) return;
-        if (getX() - 5 < 0) return;
+        if (cantMoveTo(getX() - 5, getY(), Direction.LEFT)) {
+            return;
+        }
+        if (getX() - 5 < 0) {
+            return;
+        }
         setX(getX() - 5);
         setDirection(Direction.LEFT);
         getTankImageView().setLayoutX(getX());
@@ -38,8 +42,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void moveRight() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 5 > mapSize-30) return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) {
+            return;
+        }
+        if (getX() + 5 > mapSize - 30) {
+            return;
+        }
         setDirection(Direction.RIGHT);
         setX(getX() + 5);
         getTankImageView().setLayoutX(getX());
@@ -48,8 +56,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void moveUp() {
-        if (cantMoveTo(getX(), getY() - 5, Direction.UP)) return;
-        if (getY() - 5 < 0) return;
+        if (cantMoveTo(getX(), getY() - 5, Direction.UP)) {
+            return;
+        }
+        if (getY() - 5 < 0) {
+            return;
+        }
         setDirection(Direction.UP);
         setY(getY() - 5);
         getTankImageView().setLayoutY(getY());
@@ -58,8 +70,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void moveDown() {
-        if (cantMoveTo(getX(), getY() + 5, Direction.DOWN)) return;
-        if (getY() + 5 > mapSize-30) return;
+        if (cantMoveTo(getX(), getY() + 5, Direction.DOWN)) {
+            return;
+        }
+        if (getY() + 5 > mapSize - 30) {
+            return;
+        }
         setDirection(Direction.DOWN);
         setY(getY() + 5);
         getTankImageView().setLayoutY(getY());
@@ -91,7 +107,7 @@ public class PlayerTank extends Tank {
             System.out.println("oo im dead");
             root.getChildren().remove(this.getTankImageView());
             gameState = GameState.GAME_OVER;
-            gradualExplosion(p1.getX(),p1.getY(),root);
+            gradualExplosion(p1.getX(), p1.getY(), root);
         }
 
     }

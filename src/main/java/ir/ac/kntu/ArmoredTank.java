@@ -8,6 +8,7 @@ import static ir.ac.kntu.TankGame.mapSize;
 public class ArmoredTank extends Tank {
 
     static final double WIDTH = mapSize;
+
     static final double HEIGHT = mapSize;
 
 
@@ -22,38 +23,56 @@ public class ArmoredTank extends Tank {
 
     @Override
     public void moveLeft() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) return;
-        if (getX() - 0.75 < 0)return;
-        setX(getX()-0.75);
+        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) {
+            return;
+        }
+        if (getX() - 0.75 < 0) {
+            return;
+        }
+        setX(getX() - 0.75);
         setDirection(Direction.LEFT);
         getTankImageView().setLayoutX(getX());
         getTankImageView().setImage(new Image("images/ArmoredEnemyTankLeft.png"));
     }
+
     @Override
     public void moveRight() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 0.75 > WIDTH -30)return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) {
+            return;
+        }
+        if (getX() + 0.75 > WIDTH - 30) {
+            return;
+        }
         setDirection(Direction.RIGHT);
-        setX(getX()+0.75);
+        setX(getX() + 0.75);
         getTankImageView().setLayoutX(getX());
         getTankImageView().setImage(new Image("images/ArmoredEnemyTankRight.png"));
     }
 
     @Override
     public void moveUp() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) return;
-        if (getY() - 0.75 < 0)return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) {
+            return;
+        }
+        if (getY() - 0.75 < 0) {
+            return;
+        }
         setDirection(Direction.UP);
-        setY(getY()-0.75);
+        setY(getY() - 0.75);
         getTankImageView().setLayoutY(getY());
         getTankImageView().setImage(new Image("images/ArmoredEnemyTankUp.png"));
     }
+
     @Override
     public void moveDown() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
-        if (getY() + 0.75 > HEIGHT - 30 )return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) {
+            return;
+        }
+        if (getY() + 0.75 > HEIGHT - 30) {
+            return;
+        }
         setDirection(Direction.DOWN);
-        setY(getY()+0.75);
+        setY(getY() + 0.75);
         getTankImageView().setLayoutY(getY());
         getTankImageView().setImage(new Image("images/ArmoredEnemyTankDown.png"));
     }

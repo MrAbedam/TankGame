@@ -12,19 +12,26 @@ import java.util.Iterator;
 import static ir.ac.kntu.TankGame.allTanks;
 
 public class Bullet {
+
     private static final int SPEED = 5;
+
     private static final int BULLET_WIDTH = 10;
+
     private static final int BULLET_HEIGHT = 10;
 
     private Tank owner;
 
     private ImageView bulletImageView;
+
     private double x;
+
     private double y;
+
     private Direction direction;
+
     private boolean destroyed;
 
-    public Bullet(Tank tank,double startX, double startY, Direction direction) {
+    public Bullet(Tank tank, double startX, double startY, Direction direction) {
 
         this.owner = tank;
         x = startX - (BULLET_WIDTH / 2);
@@ -34,7 +41,7 @@ public class Bullet {
             case DOWN -> bulletImageView = new ImageView(new Image("images/BulletMoveDown.png"));
             case UP -> bulletImageView = new ImageView(new Image("images/BulletMoveUp.png"));
             case LEFT -> bulletImageView = new ImageView(new Image("images/BulletMoveLeft.png"));
-            case RIGHT -> bulletImageView = new ImageView(new Image("images/BulletMoveRight.png"));
+            default -> bulletImageView = new ImageView(new Image("images/BulletMoveRight.png"));
         }
         bulletImageView.setLayoutX(x);
         bulletImageView.setLayoutY(y);
@@ -49,7 +56,7 @@ public class Bullet {
             case DOWN -> y += SPEED;
             case UP -> y -= SPEED;
             case LEFT -> x -= SPEED;
-            case RIGHT -> x += SPEED;
+            default -> x += SPEED;
         }
         bulletImageView.setLayoutY(y);
         bulletImageView.setLayoutX(x);
@@ -57,9 +64,8 @@ public class Bullet {
     }
 
 
-
     public boolean isOffScreen(Pane pane) {
-        return (y < -20 || y > pane.getHeight()+20 || x < -20 || x> pane.getWidth()+20);
+        return (y < -20 || y > pane.getHeight() + 20 || x < -20 || x > pane.getWidth() + 20);
     }
 
     public boolean collidesWith(Tank enemyTank) {

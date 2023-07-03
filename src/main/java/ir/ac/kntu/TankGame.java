@@ -32,24 +32,38 @@ import static java.lang.Thread.sleep;
 public class TankGame extends Application {
 
     public static ArrayList<Superpower> superPowers = new ArrayList<>();
+
     public static ArrayList<Tank> allTanks = new ArrayList<>();
+
     public static GameState gameState = GameState.RUNNING;
+
     public static PlayerTank p1;
+
     public static Eagle eagle;
+
     public static Pane root = new Pane();
 
     public static int storedHealth = 3;
+
     public static int mapSize = 500;
+
     public static int remainingTanks = 4;
+
     public static int playerScore = 0;  // Player's score
 
 
     public static int curLucky = 0;
+
     public static int curArmored = 0;
+
     public static int curRegular = 0;
+
     static char[][] setupMap;
+
     static String userName;
+
     static Leaderboard leaderboard = new Leaderboard();
+
 
     public GameState getGameState() {
         return gameState;
@@ -57,7 +71,7 @@ public class TankGame extends Application {
 
     private int currentLevel;
 
-    public TankGame(){
+    public TankGame() {
     }
 
     public TankGame(int level) {
@@ -69,7 +83,7 @@ public class TankGame extends Application {
         metalWall.addToPane();
     }
 
-    public void addSimpleWall(int x, int y ) {
+    public void addSimpleWall(int x, int y) {
         SimpleWall simpleWall = new SimpleWall(x, y);
         simpleWall.addToPane();
     }
@@ -102,7 +116,9 @@ public class TankGame extends Application {
     }
 
     public String healthToString() {
-        if (p1==null) return "3";
+        if (p1 == null) {
+            return "3";
+        }
         return ("images/" + p1.getHealth() + ".png");
     }
 
@@ -175,14 +191,14 @@ public class TankGame extends Application {
     }
 
     public int giveSpawnPoint() {
-        return (new Random().nextInt(4) * (mapSize/3 - 20));
+        return (new Random().nextInt(4) * (mapSize / 3 - 20));
     }
 
 
-    public void userNameInputWindow(){
+    public void userNameInputWindow() {
         Stage secondaryStage = new Stage();
         VBox secondaryRoot = new VBox();
-        Scene secondaryScene = new Scene(secondaryRoot, 300, 300,Color.BLACK);
+        Scene secondaryScene = new Scene(secondaryRoot, 300, 300, Color.BLACK);
         Label label = new Label("Enter your username:");
         TextField textField = new TextField();
         Button submitButton = new Button("Submit");
@@ -201,25 +217,25 @@ public class TankGame extends Application {
     }
 
 
-    public boolean doesUserExist(String userName){
-        for (Player p1 : leaderboard.getPlayers()){
-            if (p1.getName().equals(userName)){
+    public boolean doesUserExist(String userName) {
+        for (Player p1 : leaderboard.getPlayers()) {
+            if (p1.getName().equals(userName)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void showUserStats(String userName){
+    public void showUserStats(String userName) {
         Player curPlayer = null;
-        for (Player player : leaderboard.getPlayers()){
-            if (player.getName().equals(userName)){
+        for (Player player : leaderboard.getPlayers()) {
+            if (player.getName().equals(userName)) {
                 curPlayer = player;
             }
         }
-        Text  name = new Text("Name: "+ curPlayer.getName());
-        Text  gamesPlayed = new Text("Games played: "+ curPlayer.getNumberOfGames());
-        Text  highScore = new Text("HighScore: "+ curPlayer.getScore());
+        Text name = new Text("Name: " + curPlayer.getName());
+        Text gamesPlayed = new Text("Games played: " + curPlayer.getNumberOfGames());
+        Text highScore = new Text("HighScore: " + curPlayer.getScore());
         name.setLayoutX(150);
         gamesPlayed.setLayoutX(150);
         highScore.setLayoutX(150);
@@ -228,7 +244,7 @@ public class TankGame extends Application {
         highScore.setLayoutY(200);
 
         Pane tempRoot = new Pane();
-        Scene tempScene = new Scene(tempRoot,300,300);
+        Scene tempScene = new Scene(tempRoot, 300, 300);
         Stage tempStage = new Stage();
         Label label = new Label("User stats");
         Button submitButton = new Button("Start Game");
@@ -238,7 +254,7 @@ public class TankGame extends Application {
             tempStage.close();
         });
 
-        tempRoot.getChildren().addAll(label,submitButton,name,highScore,gamesPlayed);
+        tempRoot.getChildren().addAll(label, submitButton, name, highScore, gamesPlayed);
 
         tempStage.setScene(tempScene);
         tempStage.setTitle("User stats");
@@ -249,13 +265,13 @@ public class TankGame extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        /*userNameInputWindow();
+        userNameInputWindow();
         if (doesUserExist(userName)){
             showUserStats(userName);
-        }*/
-        userName = "mmdabed";
+        }
+        //userName = "mmdabed";
         root = new Pane();
-        Scene scene = new Scene(root, mapSize + 400, mapSize+150, Color.BLACK);
+        Scene scene = new Scene(root, mapSize + 400, mapSize + 150, Color.BLACK);
 
         System.out.println("1");
         scene.setFill(Color.BLACK);
@@ -316,7 +332,7 @@ public class TankGame extends Application {
                 } else if (gameState == GameState.GAME_OVER) {
                     stop();
                     showGameOverPage(primaryStage);
-                } else if(gameState == GameState.COMPLETED){
+                } else if (gameState == GameState.COMPLETED) {
                     root.getChildren().clear();
                     stop();
                     completeGamePage();
@@ -331,16 +347,16 @@ public class TankGame extends Application {
     }
 
 
-    public void showLeaderboard(Stage primaryStage){
+    public void showLeaderboard(Stage primaryStage) {
         Button button = new Button("See high scores");
-        button.setLayoutX(mapSize/2+100);
-        button.setLayoutY(mapSize/2+100);
+        button.setLayoutX(mapSize / 2 + 100);
+        button.setLayoutY(mapSize / 2 + 100);
         button.setOnAction(event -> {
-            Player newPlayer = new Player(userName,playerScore);
-            for (Player p1 : leaderboard.getPlayers()){
-                if (p1.getName().equals(userName)){
-                    newPlayer.setScore(Math.max(p1.getScore(),playerScore));
-                    newPlayer.setNumberOfGames(p1.getNumberOfGames()+1);
+            Player newPlayer = new Player(userName, playerScore);
+            for (Player p1 : leaderboard.getPlayers()) {
+                if (p1.getName().equals(userName)) {
+                    newPlayer.setScore(Math.max(p1.getScore(), playerScore));
+                    newPlayer.setNumberOfGames(p1.getNumberOfGames() + 1);
                 }
             }
             System.out.println(newPlayer.getNumberOfGames());
@@ -389,7 +405,9 @@ public class TankGame extends Application {
             bullet.move();
 
             for (Tank enemyTank : allTanks) {
-                if (enemyTank == p1) continue;
+                if (enemyTank == p1) {
+                    continue;
+                }
                 if (bullet.collidesWith(enemyTank)) {
                     enemyTank.hit(root);
                     bulletsToRemove.add(bullet);
@@ -413,7 +431,9 @@ public class TankGame extends Application {
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
         for (Tank testTank : allTanks) {
-            if (testTank == p1) continue;
+            if (testTank == p1) {
+                continue;
+            }
             for (Bullet bullet : testTank.getBullets()) {
                 bullet.move();
                 if (bullet.collidesWith(p1)) {
@@ -455,7 +475,9 @@ public class TankGame extends Application {
     }
 
     private void updateSuperPower() {
-        if (superPowers.isEmpty()) return;
+        if (superPowers.isEmpty()) {
+            return;
+        }
         Iterator<Superpower> superpowerIterator = superPowers.iterator();
         while (superpowerIterator.hasNext()) {
             Superpower testSuper = superpowerIterator.next();
@@ -472,7 +494,9 @@ public class TankGame extends Application {
         while (wallIterator.hasNext()) {
             Wall testWall = wallIterator.next();
             if (bullet.collidesWith(testWall)) {
-                if (bulletIterator == null) continue;
+                if (bulletIterator == null) {
+                    continue;
+                }
                 if (testWall instanceof SimpleWall) {
                     testWall.handleBulletCollision(bullet, testWall, bulletIterator, wallIterator, root);
                 }
@@ -492,15 +516,15 @@ public class TankGame extends Application {
         double startY = (mapSize - rectangleSize) / 2;
 
         for (int i = 0; i < numOfRectangles; i++) {
-            Rectangle rectangle = new Rectangle(100+startX + i * (rectangleSize + spacing), startY, rectangleSize, rectangleSize);
-            showLevelOption(rectangle,i);
+            Rectangle rectangle = new Rectangle(100 + startX + i * (rectangleSize + spacing), startY, rectangleSize, rectangleSize);
+            showLevelOption(rectangle, i);
         }
     }
 
-    private void showLevelOption(Rectangle rectangle,int i){
+    private void showLevelOption(Rectangle rectangle, int i) {
 
         rectangle.setFill(Color.YELLOW);
-        Text levelText = new Text(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2,"Level "+ String.valueOf(i + 1));
+        Text levelText = new Text(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2, "Level " + String.valueOf(i + 1));
         levelText.setFill(Color.BLACK);
         levelText.setFont(Font.font("Arial", FontWeight.BOLD, 13));
         levelText.setTextAlignment(TextAlignment.CENTER);
@@ -509,7 +533,7 @@ public class TankGame extends Application {
         int finalI = i;
         rectangle.setId(String.valueOf(i + 1));
         rectangle.setOnMouseClicked(event -> handleLevelSelection(finalI + 1));
-        root.getChildren().addAll(rectangle,levelText);
+        root.getChildren().addAll(rectangle, levelText);
     }
 
     private void handleLevelSelection(int level) {
@@ -532,23 +556,23 @@ public class TankGame extends Application {
 
     private void showWinPage() {
         // Clear the root pane
-        if (currentLevel==10){
+        if (currentLevel == 10) {
             gameState = GameState.COMPLETED;
             return;
         }
         root.getChildren().clear();
         storedHealth = p1.getHealth();
         if (currentLevel != 10) {
-            Text winText = new Text("You won the level! Next level will start in 5 seconds, Score: "+playerScore);
+            Text winText = new Text("You won the level! Next level will start in 5 seconds, Score: " + playerScore);
             Text tankKills = new Text("Lucky, Armored, Regular:" +
-                    " "+ curLucky+", "+curArmored+", "+curRegular);
+                    " " + curLucky + ", " + curArmored + ", " + curRegular);
             curArmored = 0;
             curLucky = 0;
             curRegular = 0;
             tankKills.setLayoutX(100);
-            tankKills.setLayoutY(mapSize/2-60);
+            tankKills.setLayoutY(mapSize / 2 - 60);
             winText.setLayoutX(10);
-            winText.setLayoutY(mapSize/2-30);
+            winText.setLayoutY(mapSize / 2 - 30);
             winText.setFill(Color.GREEN);
             tankKills.setFill(Color.BLUE);
             tankKills.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -556,10 +580,10 @@ public class TankGame extends Application {
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.ZERO, event -> {
                         setGameState(GameState.PAUSED);
-                        root.getChildren().addAll(tankKills,winText);
+                        root.getChildren().addAll(tankKills, winText);
                     }),
                     new KeyFrame(Duration.seconds(5), event -> {
-                        root.getChildren().removeAll(tankKills,winText);
+                        root.getChildren().removeAll(tankKills, winText);
                         setGameState(GameState.RUNNING);
                     })
             );
@@ -569,7 +593,7 @@ public class TankGame extends Application {
     }
 
 
-    public void completeGamePage(){
+    public void completeGamePage() {
         Text endGameText = new Text("You have completed this game, WELL PLAYED.");
         endGameText.setLayoutX(50);
         endGameText.setLayoutY(mapSize / 2);
@@ -585,7 +609,7 @@ public class TankGame extends Application {
         Image gameOverImage = new Image("images/GameOver.png"); // Replace "pause.png" with the path to your image
         ImageView gameOverImageView = new ImageView(gameOverImage);
         gameOverImageView.setPreserveRatio(true);
-        gameOverImageView.setLayoutX(mapSize/2);
+        gameOverImageView.setLayoutX(mapSize / 2);
         gameOverImageView.setLayoutY(50);
         gameOverImageView.setFitWidth(300);
         Text gameOverText = new Text("Game Over! You lost the game.");
@@ -594,11 +618,9 @@ public class TankGame extends Application {
         gameOverText.setFill(Color.RED);
         double fontSize = 20;
         gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        root.getChildren().addAll(gameOverImageView,gameOverText);
+        root.getChildren().addAll(gameOverImageView, gameOverText);
         showLeaderboard(primaryStage);
     }
-
-
 
 
     private void checkLevelCompletion() {
@@ -616,6 +638,7 @@ public class TankGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     public void makeMapFromFile() {
         mapSize = setupMap.length * 50;
         for (int i = 0; i < setupMap.length; i++) {
@@ -630,11 +653,11 @@ public class TankGame extends Application {
                     case 'M' -> addMetalWall(spawnX, spawnY);
                     case 'B' -> addSimpleWall(spawnX, spawnY);
                     case 'C' -> addLuckyTank(spawnX, spawnY, root);
+                    default -> {}
                 }
             }
         }
     }
-
 
 
     public void gameSetup() {
@@ -645,17 +668,17 @@ public class TankGame extends Application {
         Image pauseImage = new Image("images/Pause.png"); // Replace "pause.png" with the path to your image
         ImageView pauseImageView = new ImageView(pauseImage);
         pauseImageView.setPreserveRatio(true);
-        pauseImageView.setLayoutX(mapSize+100);
+        pauseImageView.setLayoutX(mapSize + 100);
         pauseImageView.setLayoutY(50);
         EventHandler<MouseEvent> pauseEventHandler = event -> {
-            if (gameState == GameState.PAUSED){
+            if (gameState == GameState.PAUSED) {
                 setGameState(GameState.RUNNING);
-            }else {
+            } else {
                 setGameState(GameState.PAUSED);
             }
         };
         pauseImageView.setOnMouseClicked(pauseEventHandler);
-        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(),pauseImageView);
+        root.getChildren().addAll(eagle.getImgView(), p1.getTankImageView(), pauseImageView);
     }
 
 

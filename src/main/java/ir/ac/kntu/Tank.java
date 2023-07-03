@@ -16,16 +16,25 @@ public class Tank {
 
 
     public static boolean isFreezeActive = false;
+
     public static double tankHeight = 40;
+
     public static double tankWidth = 40;
 
     private long lastShotTime = 0;
+
     private ImageView tankImageView;
+
     private double x;
+
     private double y;
+
     private int health;
+
     private Direction direction;
+
     private ArrayList<Bullet> bullets;
+
     private int value;
 
     public Tank(int x, int y) {
@@ -38,7 +47,7 @@ public class Tank {
         tankImageView.setLayoutY(y);
         tankImageView.setLayoutY(y);
         allTanks.add(this);
-        this.value = getHealth()*100;
+        this.value = getHealth() * 100;
     }
 
     public static boolean isIsFreezeActive() {
@@ -148,18 +157,22 @@ public class Tank {
         double deathX = this.getX();
         double deathY = this.getY();
         allTanks.remove(this);
-        if (this instanceof ArmoredTank){
+        if (this instanceof ArmoredTank) {
             playerScore += 200;
-        }else{
-            playerScore+= 100;
+        } else {
+            playerScore += 100;
         }
         root.getChildren().remove(this.getTankImageView());
         gradualExplosion(deathX, deathY, root);
     }
 
     public void moveLeft() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) return;
-        if (getX() - 0.5 < 0) return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.LEFT)) {
+            return;
+        }
+        if (getX() - 0.5 < 0) {
+            return;
+        }
         setX(getX() - 0.5);
         setDirection(Direction.LEFT);
         getTankImageView().setLayoutX(getX());
@@ -167,8 +180,12 @@ public class Tank {
     }
 
     public void moveRight() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) return;
-        if (getX() + 0.5 > mapSize-30) return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.RIGHT)) {
+            return;
+        }
+        if (getX() + 0.5 > mapSize - 30) {
+            return;
+        }
         setDirection(Direction.RIGHT);
         setX(getX() + 0.5);
         getTankImageView().setLayoutX(getX());
@@ -176,8 +193,12 @@ public class Tank {
     }
 
     public void moveUp() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) return;
-        if (getY() - 0.5 < 0) return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.UP)) {
+            return;
+        }
+        if (getY() - 0.5 < 0) {
+            return;
+        }
         setDirection(Direction.UP);
         setY(getY() - 0.5);
         getTankImageView().setLayoutY(getY());
@@ -185,8 +206,12 @@ public class Tank {
     }
 
     public void moveDown() {
-        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) return;
-        if (getY() + 0.5 > mapSize-30) return;
+        if (cantMoveTo(getX() + 5, getY(), Direction.DOWN)) {
+            return;
+        }
+        if (getY() + 0.5 > mapSize - 30) {
+            return;
+        }
         setDirection(Direction.DOWN);
         setY(getY() + 0.5);
         getTankImageView().setLayoutY(getY());
@@ -201,13 +226,13 @@ public class Tank {
         double xDiff = Math.abs(playerTank.getX() - getX());
         double yDiff = Math.abs(playerTank.getY() - getY());
 
-        if (xDiff > mapSize/2) {
+        if (xDiff > mapSize / 2) {
             if (playerTank.getX() < getX()) {
                 moveLeft();
             } else {
                 moveRight();
             }
-        } else if (yDiff > mapSize/2) {
+        } else if (yDiff > mapSize / 2) {
             if (playerTank.getY() < getY()) {
                 moveUp();
             } else {
@@ -263,7 +288,7 @@ public class Tank {
                         return true;
                     }
                     break;
-                case DOWN:
+                default:
                     if (topBoundary < wallY + wallHeight && bottomBoundary > wallY && rightBoundary > wallX
                             && leftBoundary < wallX + wallWidth) {
                         return true;

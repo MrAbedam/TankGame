@@ -14,12 +14,17 @@ import static ir.ac.kntu.TankGame.root;
 
 public abstract class Wall {
     private ImageView wallImageView;
+
     private double x;
+
     private double y;
+
     private boolean destroyed;
+
     public static ArrayList<Wall> allWalls = new ArrayList<>();
 
     public static double wallHeight = 45;
+
     public static double wallWidth = 45;
 
 
