@@ -2,6 +2,7 @@ package ir.ac.kntu;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,22 +27,30 @@ public class Superpower {
         this.x = x;
         this.y = y;
         SuperPowerType randomSP = giveRandomSuperPowerType();
-        this.superpowerImageView = new ImageView(new Image("images/"+randomSP.name()+".png"));
+        this.superpowerImageView = new ImageView(new Image("images/" + randomSP.name() + ".png"));
         this.superpowerImageView.setLayoutX(x);
         this.superpowerImageView.setLayoutY(y);
         this.root = root;
         this.addToPane(root);
         this.superPowerType = randomSP;
         superPowers.add(this);
-        timer = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-            removeFromPane(root);
-            if (superPowers.contains(this)){
-                superPowers.remove(this);
+
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(5000);  // Wait for 5 seconds
+                Platform.runLater(() -> {
+                    removeFromPane(root);
+                    if (superPowers.contains(this)) {
+                        superPowers.remove(this);
+                    }
+                });
+            } catch (InterruptedException e) {
+                // Handle interrupted exception
             }
-        }));
-        timer.setCycleCount(1);
-        timer.play();
+        });
+        thread.start();
     }
+
 
     public SuperPowerType giveRandomSuperPowerType(){
         Random rand = new Random();

@@ -8,7 +8,7 @@ public class LeaderboardWriter {
     public static void writeLeaderboardToFile(Leaderboard leaderboard) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("leaderboard.txt"))) {
             for (Player player : leaderboard.getPlayers()) {
-                writer.write(player.getName() + "," + player.getScore() + System.lineSeparator());
+                writer.write(player.getName() + "," + player.getScore() +","+player.getNumberOfGames()+ System.lineSeparator());
             }
             System.out.println("Leaderboard data written to file successfully.");
         } catch (IOException e) {

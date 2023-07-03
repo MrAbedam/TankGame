@@ -50,10 +50,12 @@ public class Leaderboard {
             while ((line = reader.readLine()) != null) {
                 // Split the line into player name and score
                 String[] parts = line.split(",");
-                if (parts.length == 2) {
+                if (parts.length == 3) {
                     String name = parts[0];
                     int score = Integer.parseInt(parts[1]);
+                    int games = Integer.parseInt(parts[2]);
                     Player player = new Player(name, score);
+                    player.setNumberOfGames(games);
                     players.add(player);
                 }
             }

@@ -5,9 +5,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -17,7 +14,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -28,6 +24,7 @@ import javafx.util.Duration;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static ir.ac.kntu.Wall.allWalls;
 import static java.lang.Thread.sleep;
@@ -40,7 +37,6 @@ public class TankGame extends Application {
     public static PlayerTank p1;
     public static Eagle eagle;
     public static Pane root = new Pane();
-    private Scene scene;
 
     public static int storedHealth = 3;
     public static int mapSize = 500;
@@ -62,7 +58,6 @@ public class TankGame extends Application {
     private int currentLevel;
 
     public TankGame(){
-
     }
 
     public TankGame(int level) {
@@ -124,9 +119,9 @@ public class TankGame extends Application {
     public void addScore() {
         root.getChildren().removeIf(node -> node instanceof Text && ((Text) node).getText().startsWith("Current score:"));
         Text scoreDisplay = new Text("Current score: " + playerScore);
+        scoreDisplay.setFill(Color.ORANGE);
         scoreDisplay.setLayoutX(mapSize + 40);
         scoreDisplay.setLayoutY(300);
-        scoreDisplay.setFill(Color.WHITE);
         double fontSize = 20;
         scoreDisplay.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(scoreDisplay);
@@ -137,7 +132,7 @@ public class TankGame extends Application {
         Text remainingTanksText = new Text("Remaining Tanks: " + remainingTanks);
         remainingTanksText.setLayoutX(mapSize + 40);
         remainingTanksText.setLayoutY(200);
-        remainingTanksText.setFill(Color.WHITE);
+        remainingTanksText.setFill(Color.ORANGE);
         double fontSize = 20;  // Adjust the font size as needed
         remainingTanksText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(remainingTanksText);
@@ -148,7 +143,7 @@ public class TankGame extends Application {
         Text remainingTanksText = new Text("Level: " + currentLevel);
         remainingTanksText.setLayoutX(mapSize + 90);
         remainingTanksText.setLayoutY(400);
-        remainingTanksText.setFill(Color.WHITE);
+        remainingTanksText.setFill(Color.ORANGE);
         double fontSize = 20;  // Adjust the font size as needed
         remainingTanksText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(remainingTanksText);
@@ -167,13 +162,13 @@ public class TankGame extends Application {
             int xSpawn = giveSpawnPoint();
             switch (remainingTanks % 3) {
                 case 0 -> {
-                    addArmoredTank(xSpawn, 0, root);
+                    addArmoredTank(xSpawn, 5, root);
                 }
                 case 1 -> {
-                    addRegularTank(xSpawn, 0, root);
+                    addRegularTank(xSpawn, 5, root);
                 }
                 default -> {
-                    addLuckyTank(xSpawn, 0, root);
+                    addLuckyTank(xSpawn, 5, root);
                 }
             }
         }
@@ -184,23 +179,89 @@ public class TankGame extends Application {
     }
 
 
+    public void userNameInputWindow(){
+        Stage secondaryStage = new Stage();
+        VBox secondaryRoot = new VBox();
+        Scene secondaryScene = new Scene(secondaryRoot, 300, 300,Color.BLACK);
+        Label label = new Label("Enter your username:");
+        TextField textField = new TextField();
+        Button submitButton = new Button("Submit");
+
+        submitButton.setOnAction(event -> {
+            userName = textField.getText();
+            secondaryStage.close();
+        });
+
+        secondaryRoot.getChildren().addAll(label, textField, submitButton);
+
+        secondaryStage.setScene(secondaryScene);
+        secondaryStage.setTitle("Username Input");
+        secondaryStage.showAndWait();
+        secondaryRoot.getChildren().clear();
+    }
 
 
-    private Button createLevelButton(int level) {
-        Button levelButton = new Button("Level " + level);
-        levelButton.setPrefWidth(200);
-        levelButton.setOnAction(e -> startLevel(level));
-        return levelButton;
+    public boolean doesUserExist(String userName){
+        for (Player p1 : leaderboard.getPlayers()){
+            if (p1.getName().equals(userName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void showUserStats(String userName){
+        Player curPlayer = null;
+        for (Player player : leaderboard.getPlayers()){
+            if (player.getName().equals(userName)){
+                curPlayer = player;
+            }
+        }
+        Text  name = new Text("Name: "+ curPlayer.getName());
+        Text  gamesPlayed = new Text("Games played: "+ curPlayer.getNumberOfGames());
+        Text  highScore = new Text("HighScore: "+ curPlayer.getScore());
+        name.setLayoutX(150);
+        gamesPlayed.setLayoutX(150);
+        highScore.setLayoutX(150);
+        name.setLayoutY(100);
+        gamesPlayed.setLayoutY(150);
+        highScore.setLayoutY(200);
+
+        Pane tempRoot = new Pane();
+        Scene tempScene = new Scene(tempRoot,300,300);
+        Stage tempStage = new Stage();
+        Label label = new Label("User stats");
+        Button submitButton = new Button("Start Game");
+        submitButton.setLayoutX(150);
+        submitButton.setLayoutY(250);
+        submitButton.setOnAction(event -> {
+            tempStage.close();
+        });
+
+        tempRoot.getChildren().addAll(label,submitButton,name,highScore,gamesPlayed);
+
+        tempStage.setScene(tempScene);
+        tempStage.setTitle("User stats");
+        tempStage.showAndWait();
+        tempRoot.getChildren().clear();
     }
 
     @Override
     public void start(Stage primaryStage) {
-        System.out.println("Enter name");
-        userName = new Scanner(System.in).nextLine();
 
-        readMapFromFile();
+        /*userNameInputWindow();
+        if (doesUserExist(userName)){
+            showUserStats(userName);
+        }*/
+        userName = "mmdabed";
         root = new Pane();
-        scene = new Scene(root, mapSize + 400, mapSize+150, Color.BLACK);
+        Scene scene = new Scene(root, mapSize + 400, mapSize+150, Color.BLACK);
+
+        System.out.println("1");
+        scene.setFill(Color.BLACK);
+        primaryStage.setScene(scene);
+        System.out.println("2");
+        readMapFromFile();
         showMenu();
         gameState = GameState.MENU;
         scene.setOnKeyPressed(event -> {
@@ -238,9 +299,6 @@ public class TankGame extends Application {
             }
         });
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -256,32 +314,57 @@ public class TankGame extends Application {
                 } else if (gameState == GameState.WIN) {
                     showWinPage();
                 } else if (gameState == GameState.GAME_OVER) {
-                    showGameOverPage();
                     stop();
+                    showGameOverPage(primaryStage);
                 } else if(gameState == GameState.COMPLETED){
                     root.getChildren().clear();
-                    completeGamePage();
-                    showEndGameLeaderboard();
                     stop();
+                    completeGamePage();
+                    showLeaderboard(primaryStage);
                 }
             }
         };
 
         gameLoop.start();
+
+        primaryStage.show();
     }
 
-    public void showLeaderboard(){
 
+    public void showLeaderboard(Stage primaryStage){
+        Button button = new Button("See high scores");
+        button.setLayoutX(mapSize/2+100);
+        button.setLayoutY(mapSize/2+100);
+        button.setOnAction(event -> {
+            Player newPlayer = new Player(userName,playerScore);
+            for (Player p1 : leaderboard.getPlayers()){
+                if (p1.getName().equals(userName)){
+                    newPlayer.setScore(Math.max(p1.getScore(),playerScore));
+                    newPlayer.setNumberOfGames(p1.getNumberOfGames()+1);
+                }
+            }
+            System.out.println(newPlayer.getNumberOfGames());
+            Iterator<Player> iterator = leaderboard.getPlayers().iterator();
+            while (iterator.hasNext()) {
+                Player player = iterator.next();
+                if (player.getName().equals(userName)) {
+                    iterator.remove();
+                }
+            }
+            leaderboard.addPlayer(newPlayer);
+            leaderboard.showLeaderboard();
+            LeaderboardScreen l1 = new LeaderboardScreen(leaderboard.getPlayers());
+            primaryStage.setScene(l1.getScene());
+        });
+        root.getChildren().addAll(button);
     }
 
     private void pauseGame() {
         gameState = GameState.PAUSED;
-        // Perform any additional tasks when the game is paused
     }
 
     private void resumeGame() {
         gameState = GameState.RUNNING;
-        // Perform any additional tasks when the game is resumed
     }
 
 
@@ -416,10 +499,10 @@ public class TankGame extends Application {
 
     private void showLevelOption(Rectangle rectangle,int i){
 
-        rectangle.setFill(Color.PINK);
-        Text levelText = new Text(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2, String.valueOf(i + 1));
-        levelText.setFill(Color.WHITE);
-        levelText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        rectangle.setFill(Color.YELLOW);
+        Text levelText = new Text(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2,"Level "+ String.valueOf(i + 1));
+        levelText.setFill(Color.BLACK);
+        levelText.setFont(Font.font("Arial", FontWeight.BOLD, 13));
         levelText.setTextAlignment(TextAlignment.CENTER);
         levelText.setTranslateX(-levelText.getBoundsInLocal().getWidth() / 2);
         levelText.setTranslateY(levelText.getBoundsInLocal().getHeight() / 4);
@@ -485,25 +568,17 @@ public class TankGame extends Application {
         }
     }
 
-    static int loopPrevention = 0;
-
-    public void showEndGameLeaderboard() {
-        Player newPlayer = new Player(userName,playerScore);
-        leaderboard.addPlayer(newPlayer);
-        leaderboard.showLeaderboard();
-        System.out.println("Game Completed");
-    }
 
     public void completeGamePage(){
         Text endGameText = new Text("You have completed this game, WELL PLAYED.");
         endGameText.setLayoutX(50);
         endGameText.setLayoutY(mapSize / 2);
-        endGameText.setFill(Color.WHITE);
+        endGameText.setFill(Color.GREEN);
         endGameText.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 30));
         root.getChildren().add(endGameText);
     }
 
-    private void showGameOverPage() {
+    private void showGameOverPage(Stage primaryStage) {
         // Display the game over page
         LeaderboardWriter.writeLeaderboardToFile(leaderboard);
         root.getChildren().clear();
@@ -520,11 +595,10 @@ public class TankGame extends Application {
         double fontSize = 20;
         gameOverText.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         root.getChildren().addAll(gameOverImageView,gameOverText);
-        Player newPlayer = new Player(userName,playerScore);
-        leaderboard.addPlayer(newPlayer);
-        leaderboard.showLeaderboard();
-
+        showLeaderboard(primaryStage);
     }
+
+
 
 
     private void checkLevelCompletion() {
