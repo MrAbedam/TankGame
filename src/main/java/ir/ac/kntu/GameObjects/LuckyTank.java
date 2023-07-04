@@ -1,14 +1,17 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
+import ir.ac.kntu.EnumsAndStates.Direction;
+import ir.ac.kntu.EnumsAndStates.SuperPowerType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.util.Random;
 
-import static ir.ac.kntu.ArmoredTank.HEIGHT;
-import static ir.ac.kntu.ArmoredTank.WIDTH;
-import static ir.ac.kntu.TankGame.*;
+import static ir.ac.kntu.GameObjects.ArmoredTank.HEIGHT;
+import static ir.ac.kntu.GameObjects.ArmoredTank.WIDTH;
+
+import static ir.ac.kntu.Engine.GlobalConstants.*;
 
 public class LuckyTank extends Tank {
 

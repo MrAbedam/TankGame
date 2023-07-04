@@ -1,15 +1,15 @@
-package ir.ac.kntu;
+package ir.ac.kntu.UI;
 
+
+import ir.ac.kntu.Engine.GlobalConstants;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static ir.ac.kntu.TankGame.leaderboard;
-
 public class Leaderboard implements Serializable {
-    private ArrayList<Player> players;
+    public ArrayList<Player> players;
 
     public Leaderboard() {
         players = new ArrayList<>();
@@ -18,7 +18,7 @@ public class Leaderboard implements Serializable {
     public void addPlayer(Player player) {
         players.add(player);
         sortPlayers();
-        LeaderboardWriter.writeLeaderBoard(leaderboard); // Save the updated leaderboard data
+        LeaderboardWriter.writeLeaderBoard(GlobalConstants.leaderboard); // Save the updated leaderboard data
     }
 
     public ArrayList<Player> getPlayers() {

@@ -1,5 +1,6 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
+import ir.ac.kntu.EnumsAndStates.SuperPowerType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -11,8 +12,8 @@ import javafx.util.Duration;
 
 import java.util.Random;
 
-import static ir.ac.kntu.TankGame.p1;
-import static ir.ac.kntu.TankGame.superPowers;
+import static ir.ac.kntu.Engine.GlobalConstants.p1;
+import static ir.ac.kntu.Engine.GlobalConstants.superPowers;
 
 public class Superpower {
 

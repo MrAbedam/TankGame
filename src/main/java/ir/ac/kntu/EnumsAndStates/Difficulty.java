@@ -1,4 +1,4 @@
-package ir.ac.kntu;
+package ir.ac.kntu.EnumsAndStates;
 
 public enum Difficulty { EASY, MEDIUM, HARD
 }

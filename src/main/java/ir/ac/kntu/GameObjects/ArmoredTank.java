@@ -1,9 +1,10 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
+import ir.ac.kntu.EnumsAndStates.Direction;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import static ir.ac.kntu.TankGame.mapSize;
+import static ir.ac.kntu.Engine.GlobalConstants.mapSize;
 
 public class ArmoredTank extends Tank {
 

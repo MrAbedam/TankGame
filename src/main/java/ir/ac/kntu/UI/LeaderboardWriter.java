@@ -1,7 +1,9 @@
-package ir.ac.kntu;
+package ir.ac.kntu.UI;
 
 import java.io.*;
-import java.util.ArrayList;
+
+import ir.ac.kntu.GameObjects.PlayerTank;
+import ir.ac.kntu.UI.Leaderboard;
 
 public class LeaderboardWriter implements Serializable{
     public static void writeLeaderBoard(Leaderboard leaderboard){

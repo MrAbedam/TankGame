@@ -1,13 +1,12 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
+import ir.ac.kntu.EnumsAndStates.Direction;
+import ir.ac.kntu.EnumsAndStates.GameState;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
-
-import static ir.ac.kntu.TankGame.*;
-import static ir.ac.kntu.Wall.*;
+import static ir.ac.kntu.Engine.GlobalConstants.*;
 
 public class PlayerTank extends Tank {
 

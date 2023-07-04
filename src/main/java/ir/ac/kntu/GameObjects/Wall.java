@@ -1,16 +1,13 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
-import javafx.geometry.Point2D;
+import ir.ac.kntu.Engine.GlobalConstants;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
-import static ir.ac.kntu.TankGame.root;
 
 public abstract class Wall {
     private ImageView wallImageView;
@@ -66,10 +63,10 @@ public abstract class Wall {
         this.destroyed = destroyed;
     }
 
-    public abstract void handleBulletCollision(Bullet bullet, Wall testWall, Iterator<Bullet> bulletIterator, Iterator<Wall> wallIterator,Pane root);
+    public abstract void handleBulletCollision(Bullet bullet, Wall testWall, Iterator<Bullet> bulletIterator, Iterator<Wall> wallIterator, Pane root);
 
     public void addToPane() {
-        root.getChildren().add(wallImageView);
+        GlobalConstants.root.getChildren().add(wallImageView);
     }
 
     public void removeFromPane(Pane root) {

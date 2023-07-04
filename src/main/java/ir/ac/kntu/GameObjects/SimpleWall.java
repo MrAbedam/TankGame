@@ -1,10 +1,10 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
 import javafx.scene.layout.Pane;
 
 import java.util.Iterator;
 
-import static ir.ac.kntu.Tank.gradualExplosion;
+import static ir.ac.kntu.GameObjects.Tank.gradualExplosion;
 
 public class SimpleWall extends Wall {
     public SimpleWall(double x, double y) {

@@ -1,15 +1,14 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
-import ir.ac.kntu.Tank;
+import ir.ac.kntu.EnumsAndStates.Direction;
+import ir.ac.kntu.Engine.GlobalConstants;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
-import static ir.ac.kntu.TankGame.allTanks;
 
 public class Bullet {
 
@@ -92,7 +91,7 @@ public class Bullet {
     }
 
     public static void removeBulletFromTank(Pane root, Bullet currentBullet) {
-        for (Tank testTank : allTanks) {
+        for (Tank testTank : GlobalConstants.allTanks) {
             if (!testTank.getBullets().isEmpty()) {
                 Iterator<Bullet> iterator = testTank.getBullets().iterator();
                 while (iterator.hasNext()) {

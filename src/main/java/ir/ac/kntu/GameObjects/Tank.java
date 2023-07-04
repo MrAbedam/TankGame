@@ -1,5 +1,6 @@
-package ir.ac.kntu;
+package ir.ac.kntu.GameObjects;
 
+import ir.ac.kntu.EnumsAndStates.Direction;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
@@ -9,8 +10,10 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 
-import static ir.ac.kntu.TankGame.*;
-import static ir.ac.kntu.Wall.*;
+
+import static ir.ac.kntu.Engine.GlobalConstants.*;
+
+import static ir.ac.kntu.GameObjects.Wall.*;
 
 public class Tank {
 
@@ -260,40 +263,31 @@ public class Tank {
 
 
     public boolean cantMoveTo(double x, double y, Direction direction) {
-        double leftBoundary = x;
-        double rightBoundary = x + tankWidth;
-        double topBoundary = y;
-        double bottomBoundary = y + tankHeight;
         for (Wall wall : allWalls) {
-            double wallX = wall.getX();
-            double wallY = wall.getY();
-            double tankLayoutX = getTankImageView().getLayoutX();
-            double tankLayoutY = getTankImageView().getLayoutY();
             switch (direction) {
                 case LEFT:
-                    if (rightBoundary > wallX && leftBoundary < wallX + wallWidth && bottomBoundary > wallY
-                            && topBoundary < wallY + wallHeight) {
+                    if (x + tankWidth > wall.getX() && x < wall.getX() + wallWidth && y + tankHeight > wall.getY()
+                            && y < wall.getY() + wallHeight) {
                         return true;
                     }
                     break;
                 case RIGHT:
-                    if (leftBoundary < wallX + wallWidth && rightBoundary > wallX && bottomBoundary > wallY
-                            && topBoundary < wallY + wallHeight) {
+                    if (x < wall.getX() + wallWidth && x + tankWidth > wall.getX() && y + tankHeight > wall.getY()
+                            && y < wall.getY() + wallHeight) {
                         return true;
                     }
                     break;
                 case UP:
-                    if (bottomBoundary > wallY && topBoundary < wallY + wallHeight && rightBoundary > wallX
-                            && leftBoundary < wallX + wallWidth) {
+                    if (y + tankHeight > wall.getY() && y < wall.getY() + wallHeight && x + tankWidth > wall.getX()
+                            && x < wall.getX() + wallWidth) {
                         return true;
                     }
                     break;
                 default:
-                    if (topBoundary < wallY + wallHeight && bottomBoundary > wallY && rightBoundary > wallX
-                            && leftBoundary < wallX + wallWidth) {
+                    if (y < wall.getY() + wallHeight && y + tankHeight > wall.getY() && x + tankWidth > wall.getX()
+                            && x < wall.getX() + wallWidth) {
                         return true;
                     }
-                    break;
             }
         }
         return false;
