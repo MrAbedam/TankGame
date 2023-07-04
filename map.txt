@@ -6,7 +6,7 @@ A--O--C--C---
 -------------
 B-BB-----BB-B
 -----B-B-----
--B-B-MMM-B-B-
+-B-B-MBM-B-B-
 -B-B-B-B-B-B-
 -B-B-----B-B-
 -B-B-BBB-B-B-

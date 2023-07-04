@@ -1,3 +1,7 @@
+/*
+Mohammadreza Abedin Varamin
+40120623
+*/
 package ir.ac.kntu.Engine;
 
 import ir.ac.kntu.GameObjects.Bullet;
@@ -11,6 +15,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -177,8 +182,11 @@ public class TankGame extends Application {
         }
     }
 
+
+
     @Override
     public void start(Stage primaryStage) {
+        makeMenu();
         leaderboard = LeaderboardWriter.readLeaderBoard();
         userNameInputWindow();
         if (doesUserExist(userName)) {
@@ -338,7 +346,6 @@ public class TankGame extends Application {
     }
 
     public static void handleLevelSelection(int level) {
-        System.out.println("Selected Level: " + level);
         startLevel(level);
     }
 

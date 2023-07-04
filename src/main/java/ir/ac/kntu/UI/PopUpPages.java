@@ -116,6 +116,26 @@ public class PopUpPages {
         showLeaderboard(primaryStage);
     }
 
+    public static void makeMenu(){
+        Stage menuStage = new Stage();
+        Pane menuRoot = new Pane();
+        Scene menuScene = new Scene(menuRoot,500,400);
+
+        menuStage.setScene(menuScene);
+
+        Button submitButton = new Button("Start game");
+        submitButton.setLayoutX(225);
+        submitButton.setLayoutY(300);
+        submitButton.setOnAction(event -> {
+            menuStage.close();
+        });
+        ImageView backgroundImage = new ImageView(new Image("images/MenuPic.png"));
+        menuRoot.getChildren().addAll(backgroundImage,submitButton);
+        menuStage.setTitle("Menu");
+        menuStage.showAndWait();
+        menuRoot.getChildren().clear();
+    }
+
     public static void showLeaderboard(Stage primaryStage) {
         Button button = new Button("See high scores");
         button.setLayoutX(mapSize / 2 + 100);
@@ -128,7 +148,6 @@ public class PopUpPages {
                     newPlayer.setNumberOfGames(p1.getNumberOfGames() + 1);
                 }
             }
-            System.out.println(newPlayer.getNumberOfGames());
             Iterator<Player> iterator = leaderboard.getPlayers().iterator();
             while (iterator.hasNext()) {
                 Player player = iterator.next();

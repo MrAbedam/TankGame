@@ -26,12 +26,10 @@ public class Leaderboard implements Serializable {
     }
 
     public void sortPlayers() {
-        // Sort players based on their scores in descending order
         Collections.sort(players, Comparator.comparingInt(Player::getScore).reversed());
     }
 
     public void showLeaderboard() {
-        // Display the leaderboard
         System.out.println("Leaderboard:");
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
